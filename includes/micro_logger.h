@@ -28,7 +28,24 @@ namespace micro_logger {
      * @param line
      * @param message
      */
-    void __logme(const char *level, const char *file, int line, const char *message);
+    void __logme(const char *level, const char *file, const char*func, int line, const char *message);
+
+    /**
+ * https://stackoverflow.com/a/19004720
+ * @param path
+ * @param index
+ * @param slash_index
+ * @return
+ */
+    constexpr int32_t basename_index (const char * const path, const int32_t index = 0, const int32_t slash_index = -1) {
+        return path [index]
+               ? ( path [index] == '/'
+                   ? basename_index (path, index + 1, index)
+                   : basename_index (path, index + 1, slash_index)
+               )
+               : (slash_index + 1)
+                ;
+    }
 }
 
 #ifndef NODEBUG
@@ -40,7 +57,11 @@ namespace micro_logger {
 #define LVL_ERROR       "ERROR"
 #define LVL_CRITIACL    "CRITI"
 
+#define __FILE_ONLY__ ({ static const int32_t basename_idx = micro_logger::basename_index(__FILE__); \
+                        static_assert (basename_idx >= 0, "compile-time basename");   \
+                        __FILE__ + basename_idx;})
+
 #define MSG_DEBUG(msg) \
-    micro_logger::__logme(LVL_DEBUG, __FILE__, __LINE__, msg)
+    micro_logger::__logme(LVL_DEBUG, __FILE_ONLY__, __FUNCTION__, __LINE__, msg)
 
 #endif //MICRO_LOGGER_MICRO_LOGGER_H

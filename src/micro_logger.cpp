@@ -20,18 +20,18 @@ namespace micro_logger {
         }
 
         char buf[128];
-        std::snprintf(buf, sizeof(buf), "[%%s][%%%ss:%%%sd]%s",
-                      custom_parameters->align_filename_length,
-                      custom_parameters->align_lines_length,
-                      thead_info.info.c_str());
+        std::snprintf(buf, sizeof(buf), "[%%s]%s[%%s:%%%sd::%%s]",
+                      thead_info.info.c_str(),
+                      custom_parameters->align_lines_length
+                      );
         return buf;
     }
 
-    void __logme(const char *level, const char *file, int line, const char *message) {
+    void __logme(const char *level, const char *file, const char*func, int line, const char *message) {
         std::string header_formatter {init_header_formatter()};
         std::cout << "header:" << header_formatter << "\n";
         char header[128];
-        std::snprintf(header, sizeof(header), header_formatter.c_str(), level, file, line);
+        std::snprintf(header, sizeof(header), header_formatter.c_str(), level, file, line, func);
         std::cout << header << message << "\n";
     }
 }
