@@ -1,9 +1,10 @@
 #include <iostream>
 #include <thread>
+#include <unordered_map>
 #include "micro_logger.h"
 #include "micro_logger_tools.h"
 
-void msg_debug() {
+void msg_hello_world() {
     MSG_DEBUG("hello world");
 }
 
@@ -26,12 +27,25 @@ void threads() {
     th2.join();
 }
 
-int main() {
-    std::cout << "hello world" << std::endl;
+int main(int argc, char **argv) {
+    std::unordered_map<std::string, void(*)()> options;
+    options["msg_hello_world"] = msg_hello_world;
+    options["msg_null"] = msg_null;
+    options["threads"] = threads;
 
-    msg_debug();
-    msg_null();
-    threads();
+
+    for(int i=1; i<argc; i++) {
+        try {
+            options.at(argv[i])();
+        } catch (const std::out_of_range& e) {
+            if (std::string("all") == argv[i]) {
+                for (auto& option : options) {
+                    option.second();
+                }
+                break;
+            }
+        }
+    }
 
     return 0;
 }
