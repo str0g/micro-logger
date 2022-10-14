@@ -5,10 +5,14 @@
 #include "micro_logger.h"
 #include "thread_info.h"
 #include <iostream>
+#include <stdarg.h>
+#include <mutex>
+#include <cstring>
 
 namespace micro_logger {
     thread_local ThreadInfo thead_info;
     const DefaultParameters* custom_parameters = nullptr;
+    std::mutex sync_write;
 
     void set_custom_parameters(DefaultParameters*) {
         custom_parameters = &default_parameters;
@@ -20,18 +24,27 @@ namespace micro_logger {
         }
 
         char buf[128];
-        std::snprintf(buf, sizeof(buf), "[%%s]%s[%%s:%%%sd::%%s]",
+        std::snprintf(buf, sizeof(buf), "[%%s]%s[%%s:%%%sd::%%s][%%s]",
                       thead_info.info.c_str(),
                       custom_parameters->align_lines_length
                       );
         return buf;
     }
 
-    void __logme(const char *level, const char *file, const char*func, int line, const char *message) {
+    void __logme(const char *level, const char *file, const char*func, int line, const char* fmt, ...) {
         std::string header_formatter {init_header_formatter()};
-        std::cout << "header:" << header_formatter << "\n";
-        char header[128];
-        std::snprintf(header, sizeof(header), header_formatter.c_str(), level, file, line, func);
-        std::cout << header << message << "\n";
+        char message[custom_parameters->message_size];
+        static size_t output_size {sizeof(message) + custom_parameters->header_size};
+        // message
+        va_list args;
+        va_start(args, fmt);
+        std::vsnprintf(message, sizeof(message), fmt, args);
+        va_end(args);
+        //
+        char output[output_size];
+        std::snprintf(output, output_size, header_formatter.c_str(), level, file, line, func, message);
+        //
+        const std::lock_guard<std::mutex> lock(sync_write);
+        std::cout << output << std::endl;
     }
 }

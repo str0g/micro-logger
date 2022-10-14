@@ -9,11 +9,18 @@
 #include <vector>
 namespace micro_logger {
     struct DefaultParameters {
+        size_t header_size;
+        size_t message_size;
         const char *align_filename_length;
         const char *align_lines_length;
     };
 
+    /**
+     * for performance reasons keep @header_size + message_size below page size.
+     */
     constexpr DefaultParameters default_parameters {
+            128,
+            1024,
             "25",
             "03"
     };
@@ -28,7 +35,7 @@ namespace micro_logger {
      * @param line
      * @param message
      */
-    void __logme(const char *level, const char *file, const char*func, int line, const char *message);
+    void __logme(const char *level, const char *file, const char*func, int line, const char* fmt, ...);
 
     /**
  * https://stackoverflow.com/a/19004720
@@ -61,7 +68,7 @@ namespace micro_logger {
                         static_assert (basename_idx >= 0, "compile-time basename");   \
                         __FILE__ + basename_idx;})
 
-#define MSG_DEBUG(msg) \
-    micro_logger::__logme(LVL_DEBUG, __FILE_ONLY__, __FUNCTION__, __LINE__, msg)
+#define MSG_DEBUG(fmt, ...) \
+    micro_logger::__logme(LVL_DEBUG, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 
 #endif //MICRO_LOGGER_MICRO_LOGGER_H
