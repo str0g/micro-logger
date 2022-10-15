@@ -4,7 +4,7 @@
 
 #include "micro_logger.h"
 #include "thread_info.h"
-#include <iostream>
+
 #include <stdarg.h>
 #include <mutex>
 #include <cstring>
@@ -30,8 +30,9 @@ namespace micro_logger {
         }
 
         char buf[128];
-        std::snprintf(buf, sizeof(buf), "[%%s]%s[%%s:%%%sd::%%s][%%s]\n",
+        std::snprintf(buf, sizeof(buf), "[%%s]%s[%%%ss:%%%sd::%%s][%%s]\n",
                       thead_info.info.c_str(),
+                      custom_parameters->align_filename_length,
                       custom_parameters->align_lines_length
                       );
         return buf;

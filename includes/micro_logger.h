@@ -25,7 +25,7 @@ namespace micro_logger {
     constexpr DefaultParameters default_parameters {
             128,
             1024,
-            "25",
+            "",
             "03"
     };
     /**
