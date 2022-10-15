@@ -29,19 +29,24 @@ void msg_hello_world() {
 }
 
 void msg_null() {
-    MSG_DEBUG("%s", nullptr);
+    MSG_ERROR("%s", nullptr);
+}
+
+void msg_trace() {
+    MSG_ENTER();
+    MSG_EXIT();
 }
 
 void threads() {
     std::thread th1([&](){
         auto tid = std::this_thread::get_id();
         auto tid_to_text = micro_logger::bytes_to_hex(reinterpret_cast<const uint8_t*>(&tid), sizeof(tid));
-        MSG_DEBUG("hello %s", tid_to_text.c_str());
+        MSG_INFO("hello %s", tid_to_text.c_str());
     });
     std::thread th2([&](){
         auto tid = std::this_thread::get_id();
         auto tid_to_text = micro_logger::bytes_to_hex(reinterpret_cast<const uint8_t*>(&tid), sizeof(tid));
-        MSG_DEBUG("world %s", tid_to_text.c_str());
+        MSG_WARN("world %s", tid_to_text.c_str());
     });
     th1.join();
     th2.join();
@@ -49,7 +54,7 @@ void threads() {
 
 /**
  * for main out_of_range error is reserved exception.
- * If being throw in other case then option all expect unexpected.
+ * If being throw in other case then "option all" expect unexpected.
  * @param argc
  * @param argv
  * @return
@@ -58,11 +63,11 @@ int main(int argc, char **argv) {
     std::unordered_map<std::string, void(*)()> options;
     options["msg_hello_world"] = msg_hello_world;
     options["msg_null"] = msg_null;
+    options["msg_trace"] = msg_trace;
     options["threads"] = threads;
     options["net"] = set_network_writer;
     options["file"] = set_file_writer;
     options["stdo"] = set_stdo_writer;
-
 
     for(int i=1; i<argc; i++) {
         try {

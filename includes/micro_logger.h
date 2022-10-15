@@ -72,13 +72,32 @@ namespace micro_logger {
 #define LVL_INFO        "INFO "
 #define LVL_WARN        "WARN "
 #define LVL_ERROR       "ERROR"
-#define LVL_CRITIACL    "CRITI"
+#define LVL_CRITICAL    "CRITI"
 
 #define __FILE_ONLY__ ({ static const int32_t basename_idx = micro_logger::basename_index(__FILE__); \
                         static_assert (basename_idx >= 0, "compile-time basename");   \
                         __FILE__ + basename_idx;})
 
+#ifndef NODEBUG
 #define MSG_DEBUG(fmt, ...) \
     micro_logger::__logme(LVL_DEBUG, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+#define MSG_ENTER() \
+    micro_logger::__logme(LVL_TRACE, __FILE_ONLY__, __FUNCTION__, __LINE__, "%s", "--ENTER--")
+#define MSG_EXIT() \
+    micro_logger::__logme(LVL_TRACE, __FILE_ONLY__, __FUNCTION__, __LINE__, "%s", "--EXIT--")
+#else
+#define MSG_DEBUG(fmt, ...)
+#define MSG_ENTER()
+#define MSG_EXIT()
+#endif
+
+#define MSG_INFO(fmt, ...) \
+    micro_logger::__logme(LVL_INFO, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+#define MSG_WARN(fmt, ...) \
+    micro_logger::__logme(LVL_WARN, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+#define MSG_ERROR(fmt, ...) \
+    micro_logger::__logme(LVL_ERROR, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+#define MSG_CRITICAL(fmt, ...) \
+    micro_logger::__logme(LVL_CRITICAL, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 
 #endif //MICRO_LOGGER_MICRO_LOGGER_H
