@@ -7,6 +7,10 @@
 
 #include <string>
 #include <vector>
+#include <filesystem>
+#include "micro_logger_writer.h"
+
+
 namespace micro_logger {
     struct DefaultParameters {
         size_t header_size;
@@ -28,6 +32,12 @@ namespace micro_logger {
      * Use if need custom options and make sure that @DefaultParameters instance will be available until program terminates
      */
     void set_custom_parameters(DefaultParameters*);
+
+    /**
+     * Before any logging operation is mandatory to set writer
+     * this function called again is not going to do anything.
+     */
+    void set_writer(const BaseWriter&);
     /**
      *  Do not use directly
      * @param level

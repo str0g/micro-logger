@@ -18,13 +18,19 @@ namespace micro_logger {
         custom_parameters = &default_parameters;
     }
 
+    const BaseWriter* custom_writer = nullptr;
+    void set_writer(const BaseWriter& writer) {
+        if(not custom_writer)
+            custom_writer = &writer;
+    }
+
     std::string init_header_formatter() {
         if (!custom_parameters) {
             custom_parameters = &default_parameters;
         }
 
         char buf[128];
-        std::snprintf(buf, sizeof(buf), "[%%s]%s[%%s:%%%sd::%%s][%%s]",
+        std::snprintf(buf, sizeof(buf), "[%%s]%s[%%s:%%%sd::%%s][%%s]\n",
                       thead_info.info.c_str(),
                       custom_parameters->align_lines_length
                       );
@@ -42,9 +48,9 @@ namespace micro_logger {
         va_end(args);
         //
         char output[output_size];
-        std::snprintf(output, output_size, header_formatter.c_str(), level, file, line, func, message);
+        auto size = std::snprintf(output, output_size, header_formatter.c_str(), level, file, line, func, message);
         //
         const std::lock_guard<std::mutex> lock(sync_write);
-        std::cout << output << std::endl;
+        custom_writer->write(output, size);
     }
 }
