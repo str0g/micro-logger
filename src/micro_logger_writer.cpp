@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <errno.h>
+#include <cstring>
 
 namespace micro_logger {
     size_t StandardOutWriter::write(const char *buf, size_t size) const {
@@ -31,9 +33,10 @@ namespace micro_logger {
     }
 
     NetworkWriter::NetworkWriter(const char* address, int port) : sock(socket(AF_INET, SOCK_STREAM, 0)) {
+        char buf[128];
         if (sock < 0) {
-            std::cerr << "open socket" << std::endl;
-            throw std::domain_error("create socket");
+            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address, port);
+            throw std::domain_error(buf);
         }
 
         sockaddr_in serv_addr = {};
@@ -41,12 +44,13 @@ namespace micro_logger {
         serv_addr.sin_port = htons(port);
 
         if (inet_pton(AF_INET, address, &serv_addr.sin_addr) <= 0) {
-            std::cerr << "Invalid or not supported address: " << address << ": " << port << std::endl;
-            throw std::domain_error("Invalid or not supported address");
+            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address, port);
+            throw std::domain_error(buf);
         }
 
         if ((client_fd = connect(sock, (struct sockaddr*)&serv_addr,sizeof(serv_addr))) < 0) {
-            throw std::domain_error("Connection Failed");
+            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address, port);
+            throw std::domain_error(buf);
         }
     }
     size_t NetworkWriter::write(const char* data, size_t size) const {
