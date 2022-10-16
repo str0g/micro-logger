@@ -32,13 +32,16 @@ namespace micro_logger {
     //read with netcat -l -p <port>
     class NetworkWriter : public BaseWriter {
         public:
-            explicit NetworkWriter(const char* address, int port);
+            explicit NetworkWriter(const std::string& address, int port);
             size_t write(const char *buf, size_t) const final;
-            NetworkWriter();
             ~NetworkWriter();
         private:
             int sock;
             int client_fd;
+            std::string address;
+            int port;
+            void reconnect();
+            void reset_socket();
     };
 }
 

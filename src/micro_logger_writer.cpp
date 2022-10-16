@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <cstring>
+#include <csignal>
+#include <mutex>
 
 namespace micro_logger {
     size_t StandardOutWriter::write(const char *buf, size_t size) const {
@@ -35,10 +37,36 @@ namespace micro_logger {
         outfile.close();
     }
 
-    NetworkWriter::NetworkWriter(const char* address, int port) : sock(socket(AF_INET, SOCK_STREAM, 0)) {
+    NetworkWriter *instance = nullptr;
+    std::mutex instance_mutex;
+    NetworkWriter::NetworkWriter(const std::string& address, int port) : address(address), port(port), sock(socket(AF_INET, SOCK_STREAM, 0)) {
+        instance = this;
+        reconnect();
+
+        struct sigaction action = {};
+        action.sa_handler = [](int) { //simple not beautiful solution to reconnect
+            std::lock_guard<std::mutex> lock(instance_mutex);
+            if(instance) {
+                try {
+                    instance->reset_socket();
+                    instance->reconnect();
+                } catch (const std::exception& e) {
+                    std::cerr << e.what() << std::endl;
+                }
+            }
+        };
+
+        if (sigaction(SIGPIPE, &action, nullptr) == -1) {
+            char buf[128];
+            std::snprintf(buf, sizeof(buf), "%s", strerrordesc_np(errno));
+            throw std::domain_error(buf);
+        }
+    }
+
+    void NetworkWriter::reconnect() {
         char buf[128];
         if (sock < 0) {
-            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address, port);
+            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address.c_str(), port);
             throw std::domain_error(buf);
         }
 
@@ -46,21 +74,29 @@ namespace micro_logger {
         serv_addr.sin_family = AF_INET;
         serv_addr.sin_port = htons(port);
 
-        if (inet_pton(AF_INET, address, &serv_addr.sin_addr) <= 0) {
-            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address, port);
+        if (inet_pton(AF_INET, address.c_str(), &serv_addr.sin_addr) <= 0) {
+            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address.c_str(), port);
             throw std::domain_error(buf);
         }
 
         if ((client_fd = connect(sock, (struct sockaddr*)&serv_addr,sizeof(serv_addr))) < 0) {
-            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address, port);
+            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address.c_str(), port);
             throw std::domain_error(buf);
         }
     }
+
+    void NetworkWriter::reset_socket() {
+        close(client_fd);
+        sock = socket(AF_INET, SOCK_STREAM, 0);
+    }
+
     size_t NetworkWriter::write(const char* data, size_t size) const {
         return send(sock, data, size, 0);
     }
 
     NetworkWriter::~NetworkWriter() {
+        std::lock_guard<std::mutex> lock(instance_mutex);
         close(client_fd);
+        instance = nullptr;
     }
 }
