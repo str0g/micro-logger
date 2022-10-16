@@ -7,9 +7,6 @@
 #ifndef MICRO_LOGGER_MICRO_LOGGER_H
 #define MICRO_LOGGER_MICRO_LOGGER_H
 
-#include <string>
-#include <vector>
-#include <filesystem>
 #include "micro_logger_writer.h"
 
 
