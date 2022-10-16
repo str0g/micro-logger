@@ -17,6 +17,7 @@ namespace micro_logger {
         size_t message_size;
         const char *align_filename_length;
         const char *align_lines_length;
+        const char *time_format; /// https://en.cppreference.com/w/cpp/chrono/c/strftime
     };
 
     /**
@@ -26,7 +27,8 @@ namespace micro_logger {
             128,
             1024,
             "",
-            "03"
+            "03",
+            "[%D %T]"
     };
     /**
      * Use if need custom options and make sure that @DefaultParameters instance will be available until program terminates

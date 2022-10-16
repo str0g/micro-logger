@@ -8,6 +8,8 @@
 #include <stdarg.h>
 #include <mutex>
 #include <cstring>
+#include <chrono>
+#include <iostream>
 
 namespace micro_logger {
     thread_local ThreadInfo thead_info;
@@ -38,6 +40,14 @@ namespace micro_logger {
         return buf;
     }
 
+    size_t get_time(char* output) {
+        std::time_t t = std::time(nullptr);
+        return std::strftime(output,
+                             custom_parameters->header_size,
+                             custom_parameters->time_format,
+                             std::localtime(&t));
+    }
+
     void __logme(const char *level, const char *file, const char*func, int line, const char* fmt, ...) {
         std::string header_formatter {init_header_formatter()};
         char message[custom_parameters->message_size];
@@ -49,9 +59,17 @@ namespace micro_logger {
         va_end(args);
         //
         char output[output_size];
-        auto size = std::snprintf(output, output_size, header_formatter.c_str(), level, file, line, func, message);
+        auto current_time_size = get_time(output);
+        auto size = std::snprintf(output+current_time_size,
+                                  output_size - current_time_size,
+                                  header_formatter.c_str(),
+                                  level,
+                                  file,
+                                  line,
+                                  func,
+                                  message);
         //
         const std::lock_guard<std::mutex> lock(sync_write);
-        custom_writer->write(output, size);
+        custom_writer->write(output, size + current_time_size);
     }
 }
