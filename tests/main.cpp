@@ -43,6 +43,10 @@ void msg_trace() {
     MSG_EXIT();
 }
 
+void msg_critical() {
+    MSG_CRITICAL("%s %d %s", "run out of chocolate for", 1, "time!");
+}
+
 void threads() {
     std::thread th1([&](){
         auto tid = std::this_thread::get_id();
@@ -70,6 +74,7 @@ int main(int argc, char **argv) {
     options["msg_hello_world"] = msg_hello_world;
     options["msg_null"] = msg_null;
     options["msg_trace"] = msg_trace;
+    options["msg_critical"] = msg_critical;
     options["threads"] = threads;
     options["net"] = set_network_writer;
     options["file"] = set_file_writer;
