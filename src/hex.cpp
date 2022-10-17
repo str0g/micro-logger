@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "micro_logger_tools.h"
+#include "micro_logger_tools.hpp"
 #include <ostream>
 #include <iomanip>
 

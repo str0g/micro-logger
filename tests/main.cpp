@@ -9,9 +9,9 @@
 #include <unordered_map>
 #include <memory>
 
-#include "micro_logger.h"
-#include "micro_logger_tools.h"
-#include "micro_logger_writer.h"
+#include "micro_logger.hpp"
+#include "micro_logger_tools.hpp"
+#include "micro_logger_writer.hpp"
 
 std::shared_ptr<micro_logger::BaseWriter> writer;
 

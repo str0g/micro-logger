@@ -5,7 +5,7 @@
  */
 
 #include "thread_info.h"
-#include "micro_logger_tools.h"
+#include "micro_logger_tools.hpp"
 
 namespace micro_logger {
     ThreadInfo::ThreadInfo() : tid(std::this_thread::get_id()), pid(getpid()), info(formatter()) {

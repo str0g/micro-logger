@@ -102,7 +102,7 @@ class ThreadsHandler(socketserver.BaseRequestHandler):
             line_info = tmp_data[index:]
         else:
             # sometime may not pass @todo further investigation needed
-            time.sleep(0.2)
+            time.sleep(0.3)
             line_info = self.request.recv(1024).decode('utf-8')
         #print("->", line_info)
         matches = re.search(regex, line_info)

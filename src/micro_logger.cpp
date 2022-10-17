@@ -4,21 +4,20 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "micro_logger.h"
+#include "micro_logger.hpp"
 #include "thread_info.h"
 
 #include <stdarg.h>
 #include <mutex>
 #include <cstring>
 #include <chrono>
-#include <iostream>
 
 namespace micro_logger {
     thread_local ThreadInfo thead_info;
-    const DefaultParameters* custom_parameters = nullptr;
+    const micro_logger_CustomParameters* custom_parameters = nullptr;
     std::mutex sync_write;
 
-    void set_custom_parameters(DefaultParameters*) {
+    void set_custom_parameters(micro_logger_CustomParameters*) {
         custom_parameters = &default_parameters;
     }
 

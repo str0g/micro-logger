@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#ifndef MICRO_LOGGER_MICRO_LOGGER_TOOLS_H
-#define MICRO_LOGGER_MICRO_LOGGER_TOOLS_H
+#ifndef MICRO_LOGGER_MICRO_LOGGER_TOOLS_HPP
+#define MICRO_LOGGER_MICRO_LOGGER_TOOLS_HPP
 
 #include <vector>
 #include <string>
@@ -26,4 +26,4 @@ namespace micro_logger {
     std::vector<uint8_t> hex_to_bytes(const std::string &hex);
 }
 
-#endif //MICRO_LOGGER_MICRO_LOGGER_TOOLS_H
+#endif //MICRO_LOGGER_MICRO_LOGGER_TOOLS_HPP

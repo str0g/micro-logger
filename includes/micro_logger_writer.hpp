@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#ifndef MICRO_LOGGER_MICRO_LOGGER_WRITER_H
-#define MICRO_LOGGER_MICRO_LOGGER_WRITER_H
+#ifndef MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP
+#define MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP
 
 #include <fstream>
 
@@ -45,4 +45,4 @@ namespace micro_logger {
     };
 }
 
-#endif //MICRO_LOGGER_MICRO_LOGGER_WRITER_H
+#endif //MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP
