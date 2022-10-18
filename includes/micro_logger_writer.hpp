@@ -12,7 +12,14 @@
 namespace micro_logger {
     class BaseWriter {
         public:
+            BaseWriter() = default;
+            virtual ~BaseWriter() = default;
             virtual size_t write(const char *buf, size_t) const = 0;
+
+            BaseWriter(const BaseWriter&) = delete;
+            BaseWriter(BaseWriter&&) = delete;
+            BaseWriter& operator=(const BaseWriter&) = delete;
+            BaseWriter& operator=(BaseWriter&&) = delete;
     };
 
     class StandardOutWriter : public BaseWriter {
