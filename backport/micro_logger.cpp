@@ -7,6 +7,7 @@
 #include "micro_logger.h"
 
 #include <stdarg.h>
+#include <iostream>
 
 #include "micro_logger.hpp"
 
@@ -34,7 +35,7 @@ void micro_logger_set_writer(void *in) {
     micro_logger::set_writer(*writer);
 }
 
-void micro_logger_logme(const char *level, const char *file, const char*func, int line, const char* fmt, ...) {
+void micro_logger_logme(const char *level, const char *file, const char* func, int line, const char* fmt, ...) {
     char buf[micro_logger::default_parameters.message_size];
     va_list args;
     va_start(args, fmt);

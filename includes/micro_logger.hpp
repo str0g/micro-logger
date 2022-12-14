@@ -56,13 +56,13 @@ namespace micro_logger {
 #ifndef USE_C_VERSION
 
 #ifndef NODEBUG
-#define LVL_TRACE       "TRACE"
-#define LVL_DEBUG       "DEBUG"
+const char* LVL_TRACE       = "TRACE";
+const char* LVL_DEBUG       = "DEBUG";
 #endif
-#define LVL_INFO        "INFO "
-#define LVL_WARN        "WARN "
-#define LVL_ERROR       "ERROR"
-#define LVL_CRITICAL    "CRITI"
+const char* LVL_INFO        = "INFO ";
+const char* LVL_WARN        = "WARN ";
+const char* LVL_ERROR       = "ERROR";
+const char* LVL_CRITICAL    = "CRITI";
 
 #define __FILE_ONLY__ ({ static const int32_t basename_idx = micro_logger::basename_index(__FILE__); \
                         static_assert (basename_idx >= 0, "compile-time basename");   \
