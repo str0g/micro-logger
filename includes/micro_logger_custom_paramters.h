@@ -11,18 +11,20 @@
 extern "C" {
 
 struct micro_logger_CustomParameters {
-    size_t header_size;
-    size_t message_size;
-    const char *align_filename_length;
-    const char *align_lines_length;
-    const char *time_format; /// https://en.cppreference.com/w/cpp/chrono/c/strftime
-    const char *milliseconds_format; /// optional set tu nullptr if not used
+  size_t header_size;
+  size_t message_size;
+  const char *align_filename_length;
+  const char *align_lines_length;
+  /// https://en.cppreference.com/w/cpp/chrono/c/strftime
+  const char *time_format;
+  const char *milliseconds_format; /// optional set tu nullptr if not used
 };
 
 /**
- * Use if need custom options and make sure that @DefaultParameters instance will be available until program terminates
+ * Use if need custom options and make sure that @DefaultParameters instance
+ * will be available until program terminates
  */
-void set_custom_parameters(micro_logger_CustomParameters*);
+void set_custom_parameters(micro_logger_CustomParameters *);
 }
 
-#endif //MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMTERS_H
+#endif // MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMTERS_H

@@ -6,97 +6,100 @@
 
 #include "micro_logger_writer.hpp"
 
-#include <iostream>
-#include <sys/socket.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <errno.h>
-#include <cstring>
 #include <csignal>
+#include <cstring>
+#include <errno.h>
+#include <iostream>
 #include <mutex>
+#include <sys/socket.h>
+#include <unistd.h>
 
 namespace micro_logger {
-    size_t StandardOutWriter::write(const char *buf, size_t size) const {
-        std::cout.write(buf, size);
-        return size;
-    }
-
-    FileWriter::FileWriter(const char* path) : outfile(path) {
-        if (not outfile.is_open()) {
-            std::cerr << "failed to open file: " << path << std::endl;
-            throw std::domain_error("open file");
-        }
-    }
-
-    size_t FileWriter::write(const char* data, size_t size) const {
-        outfile.write(data, size);
-        return size;
-    }
-
-    FileWriter::~FileWriter() {
-        outfile.close();
-    }
-
-    NetworkWriter *instance = nullptr;
-    std::mutex instance_mutex;
-    NetworkWriter::NetworkWriter(const std::string& address, int port) : address(address), port(port), sock(socket(AF_INET, SOCK_STREAM, 0)) {
-        instance = this;
-        reconnect();
-
-        struct sigaction action = {};
-        action.sa_handler = [](int) { //simple not beautiful solution to reconnect
-            std::lock_guard<std::mutex> lock(instance_mutex);
-            if(instance) {
-                try {
-                    instance->reset_socket();
-                    instance->reconnect();
-                } catch (const std::exception& e) {
-                    std::cerr << e.what() << std::endl;
-                }
-            }
-        };
-
-        if (sigaction(SIGPIPE, &action, nullptr) == -1) {
-            char buf[128];
-            std::snprintf(buf, sizeof(buf), "%s", strerrordesc_np(errno));
-            throw std::domain_error(buf);
-        }
-    }
-
-    void NetworkWriter::reconnect() {
-        char buf[128];
-        if (sock < 0) {
-            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address.c_str(), port);
-            throw std::domain_error(buf);
-        }
-
-        sockaddr_in serv_addr = {};
-        serv_addr.sin_family = AF_INET;
-        serv_addr.sin_port = htons(port);
-
-        if (inet_pton(AF_INET, address.c_str(), &serv_addr.sin_addr) <= 0) {
-            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address.c_str(), port);
-            throw std::domain_error(buf);
-        }
-
-        if ((client_fd = connect(sock, (struct sockaddr*)&serv_addr,sizeof(serv_addr))) < 0) {
-            std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno), address.c_str(), port);
-            throw std::domain_error(buf);
-        }
-    }
-
-    void NetworkWriter::reset_socket() {
-        close(client_fd);
-        sock = socket(AF_INET, SOCK_STREAM, 0);
-    }
-
-    size_t NetworkWriter::write(const char* data, size_t size) const {
-        return send(sock, data, size, 0);
-    }
-
-    NetworkWriter::~NetworkWriter() {
-        std::lock_guard<std::mutex> lock(instance_mutex);
-        close(client_fd);
-        instance = nullptr;
-    }
+size_t StandardOutWriter::write(const char *buf, size_t size) const {
+  std::cout.write(buf, size);
+  return size;
 }
+
+FileWriter::FileWriter(const char *path) : outfile(path) {
+  if (not outfile.is_open()) {
+    std::cerr << "failed to open file: " << path << std::endl;
+    throw std::domain_error("open file");
+  }
+}
+
+size_t FileWriter::write(const char *data, size_t size) const {
+  outfile.write(data, size);
+  return size;
+}
+
+FileWriter::~FileWriter() { outfile.close(); }
+
+NetworkWriter *instance = nullptr;
+std::mutex instance_mutex;
+NetworkWriter::NetworkWriter(const std::string &address, int port)
+    : address(address), port(port), sock(socket(AF_INET, SOCK_STREAM, 0)) {
+  instance = this;
+  reconnect();
+
+  struct sigaction action = {};
+  action.sa_handler = [](int) { // simple not beautiful solution to reconnect
+    std::lock_guard<std::mutex> lock(instance_mutex);
+    if (instance) {
+      try {
+        instance->reset_socket();
+        instance->reconnect();
+      } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+      }
+    }
+  };
+
+  if (sigaction(SIGPIPE, &action, nullptr) == -1) {
+    char buf[128];
+    std::snprintf(buf, sizeof(buf), "%s", strerrordesc_np(errno));
+    throw std::domain_error(buf);
+  }
+}
+
+void NetworkWriter::reconnect() {
+  char buf[128];
+  if (sock < 0) {
+    std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno),
+                  address.c_str(), port);
+    throw std::domain_error(buf);
+  }
+
+  sockaddr_in serv_addr = {};
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_port = htons(port);
+
+  if (inet_pton(AF_INET, address.c_str(), &serv_addr.sin_addr) <= 0) {
+    std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno),
+                  address.c_str(), port);
+    throw std::domain_error(buf);
+  }
+
+  if ((client_fd = connect(sock, (struct sockaddr *)&serv_addr,
+                           sizeof(serv_addr))) < 0) {
+    std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno),
+                  address.c_str(), port);
+    throw std::domain_error(buf);
+  }
+}
+
+void NetworkWriter::reset_socket() {
+  close(client_fd);
+  sock = socket(AF_INET, SOCK_STREAM, 0);
+}
+
+size_t NetworkWriter::write(const char *data, size_t size) const {
+  return send(sock, data, size, 0);
+}
+
+NetworkWriter::~NetworkWriter() {
+  std::lock_guard<std::mutex> lock(instance_mutex);
+  close(client_fd);
+  instance = nullptr;
+}
+} // namespace micro_logger

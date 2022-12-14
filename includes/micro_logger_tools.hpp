@@ -7,8 +7,8 @@
 #ifndef MICRO_LOGGER_MICRO_LOGGER_TOOLS_HPP
 #define MICRO_LOGGER_MICRO_LOGGER_TOOLS_HPP
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace micro_logger {
 /**
@@ -16,14 +16,14 @@ namespace micro_logger {
  * @param size
  * @return
  */
-    std::string bytes_to_hex(const uint8_t *, size_t size);
+std::string bytes_to_hex(const uint8_t *, size_t size);
 
 /**
  * reinterpret hex to something else in further step
  * @param hex
  * @return
  */
-    std::vector<uint8_t> hex_to_bytes(const std::string &hex);
-}
+std::vector<uint8_t> hex_to_bytes(const std::string &hex);
+} // namespace micro_logger
 
-#endif //MICRO_LOGGER_MICRO_LOGGER_TOOLS_HPP
+#endif // MICRO_LOGGER_MICRO_LOGGER_TOOLS_HPP

@@ -7,11 +7,11 @@
 #include "micro_logger.h"
 
 int main() {
-    void *writer = micro_logger_get_stdout_writer();
-    micro_logger_set_writer(writer);
+  void *writer = micro_logger_get_stdout_writer();
+  micro_logger_set_writer(writer);
 
-    MSG_DEBUG("checked with C11");
-    MSG_DEBUG("%s%d", "checked with C", 11);
+  MSG_DEBUG("checked with C11");
+  MSG_DEBUG("%s%d", "checked with C", 11);
 
-    return 0;
+  return 0;
 }

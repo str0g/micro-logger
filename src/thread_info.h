@@ -12,17 +12,17 @@
 #include <unistd.h>
 
 namespace micro_logger {
-    class ThreadInfo {
-        public:
-            ThreadInfo();
+class ThreadInfo {
+public:
+  ThreadInfo();
 
-            pid_t pid;
-            std::thread::id tid;
-            const std::string info;
+  pid_t pid;
+  std::thread::id tid;
+  const std::string info;
 
-        private:
-            std::string formatter();
-    };
-}
+private:
+  std::string formatter();
+};
+} // namespace micro_logger
 
-#endif //MICRO_LOGGER_THREAD_INFO_H
+#endif // MICRO_LOGGER_THREAD_INFO_H
