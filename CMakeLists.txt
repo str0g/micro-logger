@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(micro_logger++ VERSION 0.1 LANGUAGES CXX)
 
-option(WITH_TESTS "Enable unit tests" ON)
+option(WITH_MICRO_LOGGER_TESTS "Enable unit tests" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
