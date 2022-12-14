@@ -16,6 +16,7 @@ struct micro_logger_CustomParameters {
     const char *align_filename_length;
     const char *align_lines_length;
     const char *time_format; /// https://en.cppreference.com/w/cpp/chrono/c/strftime
+    const char *milliseconds_format; /// optional set tu nullptr if not used
 };
 
 /**

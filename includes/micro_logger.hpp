@@ -19,7 +19,8 @@ namespace micro_logger {
             1024,
             "",
             "03",
-            "[%D %T]"
+            "[%D %T",
+            ".%03ld]"
     };
 
     /**
