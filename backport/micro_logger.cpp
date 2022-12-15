@@ -11,6 +11,12 @@
 
 #include "micro_logger.hpp"
 
+const char* LVL_TRACE = micro_logger::LVL_TRACE;
+const char* LVL_DEBUG = micro_logger::LVL_DEBUG;
+const char* LVL_INFO = micro_logger::LVL_INFO;
+const char* LVL_WARN = micro_logger::LVL_WARN;
+const char* LVL_ERROR = micro_logger::LVL_ERROR;
+const char* LVL_CRITICAL = micro_logger::LVL_CRITICAL;
 
 void* micro_logger_get_stdout_writer() {
     static micro_logger::StandardOutWriter instance;

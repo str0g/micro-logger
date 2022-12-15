@@ -31,13 +31,13 @@ void micro_logger_logme(const char *level, const char *file, const char *func,
                         int line, const char *fmt, ...);
 
 #ifndef NODEBUG
-const char *LVL_TRACE = "TRACE";
-const char *LVL_DEBUG = "DEBUG";
+extern const char *LVL_TRACE;
+extern const char *LVL_DEBUG;
 #endif
-const char *LVL_INFO = "INFO ";
-const char *LVL_WARN = "WARN ";
-const char *LVL_ERROR = "ERROR";
-const char *LVL_CRITICAL = "CRITI";
+extern const char *LVL_INFO;
+extern const char *LVL_WARN;
+extern const char *LVL_ERROR;
+extern const char *LVL_CRITICAL;
 
 #define CURRENT_FILE_NAME_ONLY_                                                \
   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__) // runtime
