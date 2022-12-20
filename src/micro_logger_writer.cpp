@@ -21,6 +21,10 @@ size_t StandardOutWriter::write(const char *buf, size_t size) const {
   return size;
 }
 
+size_t SilentWriter::write(const char *data, size_t size) const {
+  return 0;
+}
+
 FileWriter::FileWriter(const char *path) : outfile(path) {
   if (not outfile.is_open()) {
     std::cerr << "failed to open file: " << path << std::endl;

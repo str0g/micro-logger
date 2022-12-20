@@ -22,6 +22,12 @@ public:
   BaseWriter &operator=(BaseWriter &&) = delete;
 };
 
+class SilentWriter : public BaseWriter {
+public:
+  using BaseWriter::BaseWriter;
+  size_t write(const char *buf, size_t) const final;
+};
+
 class StandardOutWriter : public BaseWriter {
 public:
   size_t write(const char *buf, size_t) const final;

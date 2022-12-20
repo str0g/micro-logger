@@ -30,6 +30,11 @@ void set_stdo_writer() {
   set_writer(*writer);
 };
 
+void set_silent_writer() {
+  writer = std::make_shared<micro_logger::SilentWriter>();
+  set_writer(*writer);
+};
+
 void msg_hello_world() { MSG_DEBUG("hello world"); }
 
 void msg_null() { MSG_ERROR("%s", nullptr); }
@@ -77,6 +82,7 @@ int main(int argc, char **argv) {
   options["net"] = set_network_writer;
   options["file"] = set_file_writer;
   options["stdo"] = set_stdo_writer;
+  options["silent"] = set_silent_writer;
 
   for (int i = 1; i < argc; i++) {
     try {
