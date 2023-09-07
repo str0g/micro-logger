@@ -1,0 +1,39 @@
+# Maintainer: Łukasz Buśko <lukasz.busko@guns4hire.cc>
+
+pkgname=micro_logger++
+pkgver=0.1
+pkgrel=1
+arch=('any')
+
+depends=()
+makedepends=('git' 'cmake' 'ninja' 'pkgconf')
+
+source=(
+  "git+https://github.com/str0g/micro-logger"
+)
+sha256sums=(
+  'SKIP'
+)
+
+pkgdesc="Simple fast logger which can send logs to stdout, file, network or no where."
+license=('MPL')
+
+build() {
+  cd micro-logger
+  cmake . -GNinja -DCMAKE_BUILD_TYPE=Release
+  ninja
+}
+
+package() {
+  cd micro-logger
+  install -dm755 "$pkgdir/usr/lib/"
+	install -Dm755 "libmicro_logger.so" "$pkgdir/usr/lib/"
+	install -Dm755 "libmicro_logger++.so" "$pkgdir/usr/lib/"
+  install -dm755 "$pkgdir/usr/include/micro_logger"
+  for file in $(find includes -type f)
+  do
+    install -Dm644 "$file" "$pkgdir/usr/include/micro_logger/"
+  done
+  install -dm755 "$pkgdir/usr/share/pkgconfig/"
+  install -Dm644 "package/micro_logger.pc" "$pkgdir/usr/share/pkgconfig/"
+}

@@ -1,0 +1,7 @@
+prefix=/usr
+includedir=${prefix}/include/micro_logger
+ 
+Name: micro_logger
+Description: micro_logger headers
+Version: 0.1.0
+Cflags: -I${includedir}
