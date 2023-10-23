@@ -10,7 +10,7 @@ option(WITH_MICRO_LOGGER_TESTS "Enable unit tests" OFF)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (${CMAKE_BUILD_TYPE} EQUAL "Debug")
+if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 endif()
 
@@ -24,7 +24,7 @@ add_library(micro_logger SHARED ${SRC_BACKPORT} ${SRC})
 target_compile_options(micro_logger PRIVATE -DUSE_C_VERSION=1)
 add_subdirectory(backport)
 
-if(WITH_TESTS)
+if(WITH_MICRO_LOGGER_TESTS)
 enable_testing()
 
 function(custom_test test_name)
