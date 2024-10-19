@@ -2,3 +2,9 @@
 venv/
 __pycache__
 cmake-build*
+compile_commands.json
+package/pkg
+package/src
+package/micro-logger
+package/micro_logger*zst
+.cache

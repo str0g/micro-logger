@@ -70,14 +70,14 @@ constexpr const char *LVL_CRITICAL = "CRITI";
 #ifndef USE_C_VERSION
 #ifndef NODEBUG
 #define MSG_DEBUG(fmt, ...)                                                    \
-  micro_logger::__logme(micro_logger::LVL_DEBUG, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, \
-                        ##__VA_ARGS__)
+  micro_logger::__logme(micro_logger::LVL_DEBUG, __FILE_ONLY__, __FUNCTION__,  \
+                        __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_ENTER()                                                            \
-  micro_logger::__logme(micro_logger::LVL_TRACE, __FILE_ONLY__, __FUNCTION__, __LINE__,      \
-                        "%s", "--ENTER--")
+  micro_logger::__logme(micro_logger::LVL_TRACE, __FILE_ONLY__, __FUNCTION__,  \
+                        __LINE__, "%s", "--ENTER--")
 #define MSG_EXIT()                                                             \
-  micro_logger::__logme(micro_logger::LVL_TRACE, __FILE_ONLY__, __FUNCTION__, __LINE__,      \
-                        "%s", "--EXIT--")
+  micro_logger::__logme(micro_logger::LVL_TRACE, __FILE_ONLY__, __FUNCTION__,  \
+                        __LINE__, "%s", "--EXIT--")
 #else
 #define MSG_DEBUG(fmt, ...)
 #define MSG_ENTER()
@@ -85,17 +85,17 @@ constexpr const char *LVL_CRITICAL = "CRITI";
 #endif
 
 #define MSG_INFO(fmt, ...)                                                     \
-  micro_logger::__logme(micro_logger::LVL_INFO, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt,  \
-                        ##__VA_ARGS__)
+  micro_logger::__logme(micro_logger::LVL_INFO, __FILE_ONLY__, __FUNCTION__,   \
+                        __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_WARN(fmt, ...)                                                     \
-  micro_logger::__logme(micro_logger::LVL_WARN, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt,  \
-                        ##__VA_ARGS__)
+  micro_logger::__logme(micro_logger::LVL_WARN, __FILE_ONLY__, __FUNCTION__,   \
+                        __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_ERROR(fmt, ...)                                                    \
-  micro_logger::__logme(micro_logger::LVL_ERROR, __FILE_ONLY__, __FUNCTION__, __LINE__, fmt, \
-                        ##__VA_ARGS__)
+  micro_logger::__logme(micro_logger::LVL_ERROR, __FILE_ONLY__, __FUNCTION__,  \
+                        __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_CRITICAL(fmt, ...)                                                 \
-  micro_logger::__logme(micro_logger::LVL_CRITICAL, __FILE_ONLY__, __FUNCTION__, __LINE__,   \
-                        fmt, ##__VA_ARGS__)
+  micro_logger::__logme(micro_logger::LVL_CRITICAL, __FILE_ONLY__,             \
+                        __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 #endif // USE_C_VERSION
 
 #endif // MICRO_LOGGER_MICRO_LOGGER_HPP
