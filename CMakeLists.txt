@@ -2,14 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.21)
 project(micro_logger++ VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 option(WITH_MICRO_LOGGER_TESTS "Enable unit tests" OFF)
+include(GoogleTest)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
@@ -36,6 +36,17 @@ function(custom_test test_name)
     add_test(${test_name} ${test_name})
 endfunction()
 
+function(custom_gtest test_name)
+    add_executable(${test_name} tests/${test_name}.cpp)
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}")
+    target_link_libraries(${test_name} LINK_PUBLIC ${PROJECT_NAME} -lpthread -lgtest -lgtest_main)
+    gtest_add_tests(
+      TARGET ${test_name}
+    )
+endfunction()
+
 custom_test(main)
+custom_test(benchmark)
+custom_gtest(test_hex)
 
 endif()
