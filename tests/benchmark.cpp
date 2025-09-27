@@ -38,7 +38,7 @@ bench (T obj, std::string_view func, std::string_view desc,
       = std::chrono::duration_cast<std::chrono::milliseconds> (stop - start)
             .count ();
 
-  auto out = std::format ("[{}] {} took {}ms, size: {} bandwidth: {:.4f} MB/s",
+  auto out = std::format ("[{}] {} took {}ms, size: {} bandwidth: {:.2f} MB/s",
                           func, desc, exec_time_ms, data_set_size,
                           to_bandwidth_mb_s (data_set_size, exec_time_ms));
   std::cout << out << std::endl;
