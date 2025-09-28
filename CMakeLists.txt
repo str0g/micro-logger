@@ -45,7 +45,7 @@ function(custom_gtest test_name)
     )
 endfunction()
 
-custom_test(main)
+custom_test(demo)
 custom_test(benchmark)
 custom_gtest(test_hex)
 
