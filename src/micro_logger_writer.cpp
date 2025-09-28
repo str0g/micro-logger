@@ -10,6 +10,7 @@
 #include <csignal>
 #include <cstring>
 #include <errno.h>
+#include <format>
 #include <iostream>
 #include <mutex>
 #include <sys/socket.h>
@@ -21,9 +22,7 @@ size_t StandardOutWriter::write(const char *buf, size_t size) const {
   return size;
 }
 
-size_t SilentWriter::write(const char *data, size_t size) const {
-  return 0;
-}
+size_t SilentWriter::write(const char *data, size_t size) const { return 0; }
 
 FileWriter::FileWriter(const char *path) : outfile(path) {
   if (not outfile.is_open()) {
@@ -60,18 +59,15 @@ NetworkWriter::NetworkWriter(const std::string &address, int port)
   };
 
   if (sigaction(SIGPIPE, &action, nullptr) == -1) {
-    char buf[128];
-    std::snprintf(buf, sizeof(buf), "%s", strerrordesc_np(errno));
-    throw std::domain_error(buf);
+    throw std::domain_error(
+        std::format("{}", strerrordesc_np(errno)));
   }
 }
 
 void NetworkWriter::reconnect() {
-  char buf[128];
   if (sock < 0) {
-    std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno),
-                  address.c_str(), port);
-    throw std::domain_error(buf);
+    throw std::domain_error(
+        std::format("{} {}:{}", strerrordesc_np(errno), address, port));
   }
 
   sockaddr_in serv_addr = {};
@@ -79,16 +75,14 @@ void NetworkWriter::reconnect() {
   serv_addr.sin_port = htons(port);
 
   if (inet_pton(AF_INET, address.c_str(), &serv_addr.sin_addr) <= 0) {
-    std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno),
-                  address.c_str(), port);
-    throw std::domain_error(buf);
+    throw std::domain_error(
+        std::format("{} {}:{}", strerrordesc_np(errno), address, port));
   }
 
   if ((client_fd = connect(sock, (struct sockaddr *)&serv_addr,
                            sizeof(serv_addr))) < 0) {
-    std::snprintf(buf, sizeof(buf), "%s %s:%d", strerrordesc_np(errno),
-                  address.c_str(), port);
-    throw std::domain_error(buf);
+    throw std::domain_error(
+        std::format("{} {}:{}", strerrordesc_np(errno), address, port));
   }
 }
 
