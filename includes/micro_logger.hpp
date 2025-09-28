@@ -39,7 +39,7 @@ void __logme(const char *level, const char *file, const char *func, int line,
  * @param slash_index
  * @return
  */
-constexpr int32_t basename_index(const char *const path,
+consteval int32_t basename_index(const char *const path,
                                  const int32_t index = 0,
                                  const int32_t slash_index = -1) {
   return path[index] ? (path[index] == '/'
@@ -59,9 +59,8 @@ constexpr const char *LVL_CRITICAL = "CRITI";
 
 #define __FILE_ONLY__                                                          \
   ({                                                                           \
-    static const int32_t basename_idx =                                        \
+    constexpr const int32_t basename_idx =                                     \
         micro_logger::basename_index(__FILE__);                                \
-    static_assert(basename_idx >= 0, "compile-time basename");                 \
     __FILE__ + basename_idx;                                                   \
   })
 
