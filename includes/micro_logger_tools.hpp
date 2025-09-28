@@ -14,28 +14,29 @@
 
 namespace micro_logger {
 /**
- * common function to dump object as hex
- * @param size
- * @return
+ * @brief Converts a byte array to an lowercase hexadecimal string.
+ * @param bytes The byte array to convert.
+ * @return std::string A string representing the hex values of the bytes.
  */
-std::string bytes_to_hex(const uint8_t *, size_t size);
+std::string bytes_to_hex(const uint8_t *bytes, size_t size);
 
 /**
- * reinterpret hex to something else in further step
- * @param hex
- * @return
+ * @brief Converts a hexadecimal string to a vector of bytes.
+ * @param hex The hexadecimal string to convert. Can contain uppercase or lowercase letters.
+ * @return std::vector<uint8_t> A vector containing the converted bytes.
+ * @throws std::invalid_argument If the input is not a valid hexadecimal string.
  */
 std::vector<uint8_t> hex_to_bytes(const std::string &hex);
 
 /**
-* allows user to convert from hex to any integer type.
-* Is up to user to do correct endianess, by default order of data in input determine endianess.
-*  @param in table of data.
-*  @return chosen integer type.
+* @brief Convert from hex to any integer type of choice but its up to user to determine correct endianess.
+* @param in bytes array to convert.
+* @return chosen integer type.
+* @throws std::invalid_argument in case of not supported type
 */
 template <std::integral T>
 T
-bytes_to_integral (const std::vector<uint8_t> &in)
+bytes_to_integral (const std::vector<uint8_t> &bytes)
 {
   T out = 0;
   using U = std::make_unsigned_t<T>;
@@ -44,7 +45,7 @@ bytes_to_integral (const std::vector<uint8_t> &in)
   static_assert (TS == 1 || TS == 2 || TS == 4 || TS == 8,
                  "Unsupported integral size; supported sizes: 1,2,4,8");
 
-  switch (in.size ())
+  switch (bytes.size ())
     {
     case 1:
     case 2:
@@ -59,23 +60,23 @@ bytes_to_integral (const std::vector<uint8_t> &in)
   size_t index = 0;
   if constexpr (TS >= 8)
     {
-      out |= (U (in[index++]) << 56);
-      out |= (U (in[index++]) << 48);
-      out |= (U (in[index++]) << 36);
-      out |= (U (in[index++]) << 32);
+      out |= (U (bytes[index++]) << 56);
+      out |= (U (bytes[index++]) << 48);
+      out |= (U (bytes[index++]) << 36);
+      out |= (U (bytes[index++]) << 32);
     }
   if constexpr (TS >= 4)
     {
-      out |= (U (in[index++]) << 24);
-      out |= (U (in[index++]) << 16);
+      out |= (U (bytes[index++]) << 24);
+      out |= (U (bytes[index++]) << 16);
     }
   if constexpr (TS >= 2)
     {
-      out |= (U (in[index++]) << 8);
+      out |= (U (bytes[index++]) << 8);
     }
   if constexpr (TS >= 1)
     {
-      out |= (U (in[index]) << 0);
+      out |= (U (bytes[index]) << 0);
     }
 
   return out;

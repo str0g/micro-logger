@@ -38,6 +38,11 @@ TEST_F (TestHex, hex_conversion_text)
     std::vector<uint8_t> exp_bytes{ 0x6f, 0x75, 0x74 };
     EXPECT_EQ (micro_logger::hex_to_bytes (out), exp_bytes);
   }
+  {// capital letter support
+    std::string in{ "6F7574"};
+    std::vector<uint8_t> exp_bytes{ 0x6f, 0x75, 0x74 };
+    EXPECT_EQ (micro_logger::hex_to_bytes (in), exp_bytes);
+  }
 }
 
 TEST_F (TestHex, hex_conversion_positive)
