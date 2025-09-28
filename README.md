@@ -34,4 +34,4 @@ Hardware: 9800X3D 96GB 6400
 |bench_hex_to_bytes     |long data set   |8.39 MB/s      |15.58 MB/s     |54%  |
 |bench_bytes_to_integral|int32           |N/A            |230.77 MB/s    |     |
 |bench_bytes_to_integral|int64           |N/A            |304.35 MB/s    |     |
-|thread_info            |cache creation  |667ms          |750ms          |-15% |
+|thread_info            |cache creation  |580ms          |No perf gain   |     |
