@@ -6,12 +6,15 @@
 
 #include <iostream>
 #include <memory>
+#include <set>
 #include <thread>
 #include <unordered_map>
 
 #include "micro_logger.hpp"
 #include "micro_logger_tools.hpp"
 #include "micro_logger_writer.hpp"
+
+using namespace std::literals;
 
 std::shared_ptr<micro_logger::BaseWriter> writer;
 
@@ -73,30 +76,53 @@ void threads() {
  * @return
  */
 int main(int argc, char **argv) {
-  std::unordered_map<std::string, void (*)()> options;
-  options["msg_hello_world"] = msg_hello_world;
-  options["msg_null"] = msg_null;
-  options["msg_trace"] = msg_trace;
-  options["msg_critical"] = msg_critical;
-  options["threads"] = threads;
-  options["net"] = set_network_writer;
-  options["file"] = set_file_writer;
-  options["stdo"] = set_stdo_writer;
-  options["silent"] = set_silent_writer;
+  std::unordered_map<std::string, void (*)()> options = {
+      {"msg_hello_world", msg_hello_world},
+      {"msg_null", msg_null},
+      {"msg_trace", msg_trace},
+      {"msg_critical", msg_critical},
+      {"threads", threads},
+      {"net", set_network_writer},
+      {"file", set_file_writer},
+      {"stdo", set_stdo_writer},
+      {"silent", set_silent_writer},
+  };
+
+  std::set<std::string> opt_writers{
+      {"stdo"},
+      {"file"},
+      {"net"},
+      {"silent"},
+  };
 
   for (int i = 1; i < argc; i++) {
     try {
       options.at(argv[i])();
     } catch (const std::out_of_range &e) {
-      if (std::string("all") == argv[i]) {
+      if (argv[i] == "all"s) {
         for (auto &option : options) {
-          if (option.first == "net" or option.first == "file" or
-              option.first == "stdo") {
+          if (opt_writers.contains(option.first)) {
             continue;
           }
-
           option.second();
         }
+      }
+      if (argv[i] == "help"s) {
+        std::cout << "Pick writer and then msg to write" << std::endl;
+        std::cout << "writers:";
+        for (auto &opt_w : opt_writers) {
+          std::cout << " [" << opt_w << "]";
+        }
+        std::cout << std::endl;
+        std::cout << "msg to write:";
+        for (auto &option : options) {
+          if (opt_writers.contains(option.first)) {
+            continue;
+          }
+          std::cout << " [" << option.first << "]";
+        }
+        std::cout << std::endl;
+        std::cout << "example: stdo msg_hello_world" << std::endl;
         break;
       }
     } catch (const std::domain_error &e) {
