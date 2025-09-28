@@ -28,9 +28,10 @@ Caching issues with formatting or library
 Hardware: 9800X3D 96GB 6400
 |Function               |test description| C++17         |C++20          |%    |
 |:----------------------|----------------|--------------:|--------------:|:---:|
-|bench_bytes_to_hex     | short data set |18.29 MB/s     |No perf gain   |     |
-|bench_bytes_to_hex     | long data set  |35045.72 MB/s  |No perf gain   |     |
-|bench_hex_to_bytes     | short data set |2.32 MB/s      |3.76 MB/S      |61%  |
-|bench_hex_to_bytes     | long data set  |8.39 MB/s      |15.58 MB/s     |54%  |
-|bench_bytes_to_integral| int32          |N/A            |230.77 MB/s    |     |
-|bench_bytes_to_integral| int64          |N/A            |304.35 MB/s    |     |
+|bench_bytes_to_hex     |short data set  |18.29 MB/s     |No perf gain   |     |
+|bench_bytes_to_hex     |long data set   |35045.72 MB/s  |No perf gain   |     |
+|bench_hex_to_bytes     |short data set  |2.32 MB/s      |3.76 MB/S      |61%  |
+|bench_hex_to_bytes     |long data set   |8.39 MB/s      |15.58 MB/s     |54%  |
+|bench_bytes_to_integral|int32           |N/A            |230.77 MB/s    |     |
+|bench_bytes_to_integral|int64           |N/A            |304.35 MB/s    |     |
+|thread_info            |cache creation  |667ms          |750ms          |-15% |

@@ -1,9 +1,11 @@
+#include "micro_logger.hpp"
 #include "micro_logger_tools.hpp"
 #include <chrono>
 #include <cstdint>
 #include <format>
 #include <iostream>
 #include <string_view>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
@@ -158,11 +160,29 @@ void bench_bytes_to_integral() {
   }
 }
 
+void bench_thread_local_cache() {
+  {
+    std::shared_ptr<micro_logger::BaseWriter> writer =
+        std::make_shared<micro_logger::SilentWriter>();
+    set_writer(*writer);
+    size_t data_set_size = 10000;
+
+    auto exec_time = bench([&]() {
+      std::vector<std::thread> data_set;
+      for (size_t i = 0; i < data_set_size; ++i)
+        data_set.emplace_back([]() { MSG_INFO(""); });
+      for (auto &th : data_set)
+        th.join();
+    }, __func__, {"cache creation time"}, 1);
+  }
+}
+
 int main(int argc, char **argv) {
   std::unordered_map<std::string, void (*)()> options{
       {"bytes_to_hex", bench_bytes_to_hex},
       {"hex_to_bytes", bench_hex_to_bytes},
       {"bytes_to_integral", bench_bytes_to_integral},
+      {"thread_local_cache", bench_thread_local_cache},
   };
   for (int i = 1; i < argc; i++) {
     try {
