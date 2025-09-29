@@ -11,115 +11,112 @@ from threading import Thread
 import time
 import re
 #
-import common
+from common import PathToObjects
 
 paths = PathToObjects()
 
+regex_pattern = r"""
+\[(?P<data>\d{2}/\d{2}/\d{2})[ ](?P<time>\d{2}:\d{2}:\d{2}\.\d{3})\]
+\[(?P<level>(TRACE|DEBUG|INFO[ ]|WARN[ ]|ERROR|CRITI))\]
+\[pid:(?P<pid>\d{8})\]\[tid:(?P<tid>\d{16})\]
+\[(?P<file>[a-zA-Z0-9_-]+\.[cp]{1,3}):(?P<line>\d{1,4})::(?P<function>.*?)\]\[(?P<message>.*?)\]
+"""
+
+g_out = []
+
+def patern_recive_data_and_store_level_message(self):
+   data = self.request.recv(1024)
+   regex = re.compile(regex_pattern, re.VERBOSE)
+   match = regex.match(data.decode('utf-8'))
+   if not match:
+       raise ValueError('patter not matched')
+   g_out.append(match['level'])
+   g_out.append(match['message'])
+
+
 class MsgTraceHandler(socketserver.BaseRequestHandler):
+    allow_reuse_address = True
+
     def handle(self):
         data = self.request.recv(1024)
         tmp_data = data.decode('utf-8')
         index = tmp_data.find('\n')
-        line_enter = tmp_data[:index+1]
+        line = tmp_data[:index+1]
 
-        #print(line_enter)
-        regex = r"(\[[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\])(\[TRACE\])(\[pid:[A-Za-z0-9]{8}])(\[tid:[A-Za-z0-9]{16}\])(\[main.cpp:[0-9]{3}::msg_trace])(\[--ENTER--])\n"
-        matches = re.search(regex, line_enter)
-        if not matches:
-            raise ValueError("enter not found")
+        regex = re.compile(regex_pattern, re.VERBOSE)
+        match = regex.match(line)
+        if not match:
+            raise ValueError('patter not matched')
+        g_out.append(match['level'])
+        g_out.append(match['message'])
 
-        if len(tmp_data) > 100:
-            line_exit = tmp_data[index:]
+        if len(tmp_data) > 200:
+            line = tmp_data[index:]
         else:
             data = self.request.recv(1024)
-            line_exit = data.decode('utf-8')
-        #print(line_exit)
-        regex = r"(\[[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\])(\[TRACE\])(\[pid:[A-Za-z0-9]{8}])(\[tid:[A-Za-z0-9]{16}\])(\[main.cpp:[0-9]{3}::msg_trace])(\[--EXIT--])\n"
-        matches = re.search(regex, line_exit)
-        if not matches:
-            raise ValueError("exit not found")
+            line = data.decode('utf-8')
+        match = regex.match(line)
+        if not match:
+            raise ValueError('patter not matched')
+        g_out.append(match['level'])
+        g_out.append(match['message'])
 
 
 class ThreadsHandler(socketserver.BaseRequestHandler):
-    def get_tid_value(self, buf, pattern):
-        index = buf.find(pattern)
-        if (index == -1):
-            raise LookupError
-        index += len(pattern)
-        return buf[index:index+16]
+    allow_reuse_address = True
 
     def handle(self):
         data = self.request.recv(1024)
         tmp_data = data.decode('utf-8')
         index = tmp_data.find('\n')
-        line_warn = tmp_data[:index+1]
+        line = tmp_data[:index+1]
 
-        #print(line_warn)
-        regex = "(\[[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\])(\[(WARN|INFO) \])(\[pid:[A-Za-z0-9]{8}])(\[tid:[A-Za-z0-9]{16}\])(\[main.cpp:[0-9]{3}::operator\(\)])(\[(world|hello) [A-Za-z0-9]{16}\])\n"
-        matches = re.search(regex, line_warn)
-        if not matches:
-            raise ValueError("world not found")
+        regex = re.compile(regex_pattern, re.VERBOSE)
+        match = regex.match(line)
+        if not match:
+            raise ValueError('patter not matched')
+        g_out.append(match['level'])
+        msg = match["message"]
+        g_out.append(msg[:msg.rfind(' ')])
+        pid = match['pid']
+        tid = match['tid']
 
-        tid = self.get_tid_value(line_warn, 'tid:')
-        try:
-            msg_tid = self.get_tid_value(line_warn, 'world ')
-        except LookupError:
-            msg_tid = self.get_tid_value(line_warn, 'hello ')
-
-        if tid != msg_tid:
-            raise ValueError("tid did not match in message")
-
-        if len(tmp_data) > 100:
+        if len(tmp_data) > 200:
             line_info = tmp_data[index:]
         else:
             # sometime may not pass @todo further investigation needed
-            time.sleep(0.3)
             line_info = self.request.recv(1024).decode('utf-8')
-        #print("->", line_info)
-        matches = re.search(regex, line_info)
-        if not matches:
-            raise ValueError("hello not found")
-
-        tid = self.get_tid_value(line_info, 'tid:')
-        try:
-            msg_tid = self.get_tid_value(line_info, 'hello ')
-        except LookupError:
-            msg_tid = self.get_tid_value(line_info, 'world ')
-        if tid != msg_tid:
-            raise ValueError("tid did not match in message")
-
-        if line_warn == line_info:
-            raise ValueError("parsing the same data fix test or logger")
+        match = regex.match(line_info)
+        if not match:
+            raise ValueError('patter not matched')
+        g_out.append(match['level'])
+        msg = match["message"]
+        g_out.append(msg[:msg.rfind(' ')])
+        if pid != match['pid']:
+            g_out.append("pids are different")
+        if(tid == match['tid']):
+            g_out.append("tids are equal")
 
 
 class MsgHelloWroldHandler(socketserver.BaseRequestHandler):
+    allow_reuse_address = True
+
     def handle(self):
-        data = self.request.recv(1024)
-        #print(data)
-        regex = r"(\[[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\])(\[DEBUG\])(\[pid:[A-Za-z0-9]{8}])(\[tid:[A-Za-z0-9]{16}\])(\[main.cpp:[0-9]{3}::msg_hello_world])(\[hello world])\n"
-        matches = re.search(regex, data.decode('utf-8'))
-        if not matches:
-            raise ValueError("hello world not found")
+        patern_recive_data_and_store_level_message(self)
 
 
 class MsgNullHandler(socketserver.BaseRequestHandler):
+    allow_reuse_address = True
+
     def handle(self):
-        data = self.request.recv(1024)
-        #print(data)
-        regex = r"(\[[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\])(\[ERROR\])(\[pid:[A-Za-z0-9]{8}])(\[tid:[A-Za-z0-9]{16}\])(\[main.cpp:[0-9]{3}::msg_null])(\[\(null\)])\n"
-        matches = re.search(regex, data.decode('utf-8'))
-        if not matches:
-            raise ValueError("null not found")
+        patern_recive_data_and_store_level_message(self)
 
 
 class MsgCriticalHandler(socketserver.BaseRequestHandler):
+    allow_reuse_address = True
+
     def handle(self):
-        data = self.request.recv(1024)
-        #print(data)
-        regex = "(\[[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\])(\[CRITI\])(\[pid:[A-Za-z0-9]{8}])(\[tid:[A-Za-z0-9]{16}\])(\[main.cpp:[0-9]{3}::msg_critical])(\[run out of chocolate for 1 time!)\]\n"
-        matches = re.search(regex, data.decode('utf-8'))
-        if not matches:
-            raise ValueError("critical not found")
+        patern_recive_data_and_store_level_message(self)
 
 
 def test_main_exec(writer='net', test='all', sleep=0.1):
@@ -129,30 +126,42 @@ def test_main_exec(writer='net', test='all', sleep=0.1):
     return output
 
 
-class CppAppTesting(unittest.TestCase):
+class CppDemoTesting(unittest.TestCase):
+    def setUp(self) -> None:
+        g_out.clear()
+        return super().setUp()
+
     def base_fun(self, writer, test, handler):
         t1 = Thread(target=test_main_exec, args=(writer, test))
         t1.start()
         with socketserver.TCPServer(('127.0.0.1', 6024), handler) as server:
-            server.allow_reuse_address = True
-            server.timeout = 0.5
             server.handle_request()
         t1.join()
 
     def test_msg_trace(self):
         self.base_fun('net', 'msg_trace', MsgTraceHandler)
+        exp = ['TRACE', '--ENTER--', 'TRACE', '--EXIT--']
+        self.assertEqual(g_out, exp)
 
     def test_threads(self):
         self.base_fun('net', 'threads', ThreadsHandler)
+        exp = ['INFO ', 'hello', 'WARN ', 'world']
+        self.assertEqual(set(g_out), set(exp))
 
     def test_msg_hello_world(self):
         self.base_fun('net', 'msg_hello_world', MsgHelloWroldHandler)
+        exp = ['DEBUG', 'hello world']
+        self.assertEqual(g_out, exp)
 
     def test_msg_null(self):
         self.base_fun('net', 'msg_null', MsgNullHandler)
+        exp = ['ERROR', '(null)']
+        self.assertEqual(g_out, exp)
 
     def test_msg_critical(self):
         self.base_fun('net', 'msg_critical', MsgCriticalHandler)
+        exp = ['CRITI' , "run out of chocolate for 1 time!"]
+        self.assertEqual(g_out, exp)
 
 
 if __name__ == '__main__':

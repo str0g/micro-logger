@@ -20,7 +20,7 @@ class PathToObjects:
             obj = obj.parent
         self.logger_library_location_cpp = list(self.top_path.glob('**/{}++.so'.format(library_name)))[0]
         self.logger_library_location = list(self.top_path.glob('**/{}.so'.format(library_name)))[0]
-        self.test_main = list(self.top_path.glob('**/main'))[0]
+        self.test_main = list(self.top_path.glob('**/demo'))[0]
 
     def get_project_top_dir(self):
         p = Popen(['git', 'rev-parse', '--show-toplevel'], stdout=PIPE)
