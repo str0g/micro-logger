@@ -32,20 +32,15 @@ void set_writer(const BaseWriter &);
 void __logme(const char *level, const char *file, const char *func, int line,
              const char *fmt, ...);
 
-/**
- * https://stackoverflow.com/a/19004720
- * @param path
- * @param index
- * @param slash_index
- * @return
- */
-consteval int32_t basename_index(const char *const path,
-                                 const int32_t index = 0,
-                                 const int32_t slash_index = -1) {
-  return path[index] ? (path[index] == '/'
-                            ? basename_index(path, index + 1, index)
-                            : basename_index(path, index + 1, slash_index))
-                     : (slash_index + 1);
+consteval const char *basename(const char *const path) {
+  int slash_index = -1;
+  int index = 0;
+  do {
+    if (path[index] == '/') {
+      slash_index = index + 1;
+    }
+  } while (path[index++]);
+  return &path[slash_index == -1 ? 0 : slash_index];
 }
 
 #ifndef NODEBUG
@@ -57,16 +52,12 @@ constexpr const char *LVL_WARN = "WARN ";
 constexpr const char *LVL_ERROR = "ERROR";
 constexpr const char *LVL_CRITICAL = "CRITI";
 
-#define __FILE_ONLY__                                                          \
-  ({                                                                           \
-    constexpr const int32_t basename_idx =                                     \
-        micro_logger::basename_index(__FILE__);                                \
-    __FILE__ + basename_idx;                                                   \
-  })
+#define __FILE_ONLY__ micro_logger::basename(__FILE__)
 
 } // namespace micro_logger
 
 #ifndef USE_C_VERSION
+
 #ifndef NODEBUG
 #define MSG_DEBUG(fmt, ...)                                                    \
   micro_logger::__logme(micro_logger::LVL_DEBUG, __FILE_ONLY__, __FUNCTION__,  \

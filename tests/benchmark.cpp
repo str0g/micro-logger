@@ -167,13 +167,67 @@ void bench_thread_local_cache() {
     set_writer(*writer);
     size_t data_set_size = 10000;
 
-    auto exec_time = bench([&]() {
-      std::vector<std::thread> data_set;
-      for (size_t i = 0; i < data_set_size; ++i)
-        data_set.emplace_back([]() { MSG_INFO(""); });
-      for (auto &th : data_set)
-        th.join();
-    }, __func__, {"cache creation time"}, 1);
+    auto exec_time = bench(
+        [&]() {
+          std::vector<std::thread> data_set;
+          for (size_t i = 0; i < data_set_size; ++i)
+            data_set.emplace_back([]() { MSG_INFO(""); });
+          for (auto &th : data_set)
+            th.join();
+        },
+        __func__, {"cache creation time"}, 1);
+  }
+}
+
+void bench_logging_bandwidth() {
+  // data to write is 907bytes per one attempt
+  std::shared_ptr<micro_logger::BaseWriter> writer =
+      std::make_shared<micro_logger::FileWriter>("/dev/null");
+  set_writer(*writer);
+  {
+    size_t data_set_size = 50000;
+
+    auto exec_time = bench(
+        [&]() {
+          for (size_t i = 0; i < data_set_size; ++i) {
+            MSG_ENTER();
+            MSG_DEBUG("this logging [%s] is specialy crafted to write numbers: "
+                      "[%08ld] and [pi]:%08f",
+                      "message", i, (3.14 * i));
+            MSG_INFO("my super shot logging message");
+            MSG_WARN("This is warninig message");
+            MSG_ERROR("Sometimes errors happens");
+            MSG_CRITICAL("Critiacal errors happens");
+            MSG_EXIT();
+          }
+        },
+        __func__, {"write one thread"}, 907 * data_set_size);
+  }
+  {
+    size_t data_set_size = 100;
+
+    auto exec_time = bench(
+        [&]() {
+          std::vector<std::thread> data_set;
+          for (size_t i = 0; i < data_set_size; ++i)
+            data_set.emplace_back([i, data_set_size]() {
+              for (size_t i = 0; i < data_set_size*10; ++i) {
+                MSG_ENTER();
+                MSG_DEBUG(
+                    "this logging [%s] is specialy crafted to write numbers: "
+                    "[%ld] and [pi]:%f",
+                    "message", i, (3.14 * i));
+                MSG_INFO("my super shot logging message");
+                MSG_WARN("This is warninig message");
+                MSG_ERROR("Sometimes errors happens");
+                MSG_CRITICAL("Critiacal errors happens");
+                MSG_EXIT();
+              }
+            });
+          for (auto &th : data_set)
+            th.join();
+        },
+        __func__, {"write multithread"}, 907 * data_set_size * (data_set_size *10));
   }
 }
 
@@ -183,6 +237,7 @@ int main(int argc, char **argv) {
       {"hex_to_bytes", bench_hex_to_bytes},
       {"bytes_to_integral", bench_bytes_to_integral},
       {"thread_local_cache", bench_thread_local_cache},
+      {"logging_bandwidth", bench_logging_bandwidth},
   };
   for (int i = 1; i < argc; i++) {
     try {
