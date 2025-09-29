@@ -22,7 +22,11 @@ Caching issues with formatting or library
 @TODO
 
 # How to use
-@TODO demo application section
+CPP demo
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/demo help```
+###
+C demo
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/backport/demo_c```
 
 # Performance changes:
 Hardware: 9800X3D, 96GB 6400, Goodram IRPRO 4TB

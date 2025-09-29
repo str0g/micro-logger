@@ -33,7 +33,6 @@ function(custom_test test_name)
     add_executable(${test_name} tests/${test_name}.cpp)
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}")
     target_link_libraries(${test_name} LINK_PUBLIC ${PROJECT_NAME} -lpthread)
-    add_test(${test_name} ${test_name})
 endfunction()
 
 function(custom_gtest test_name)

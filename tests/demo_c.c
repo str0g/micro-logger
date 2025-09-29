@@ -11,7 +11,7 @@ int main() {
   micro_logger_set_writer(writer);
 
   MSG_DEBUG("checked with C11");
-  MSG_DEBUG("%s%d", "checked with C", 11);
+  MSG_INFO("%s%d", "checked with C", 11);
 
   return 0;
 }

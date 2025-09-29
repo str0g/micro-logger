@@ -16,9 +16,8 @@ if(WITH_TESTS)
     function(custom_c_test test_name)
         add_executable(${test_name} ../tests/${test_name}.c)
         target_link_libraries(${test_name} LINK_PUBLIC ${PROJECT_NAME} -lpthread)
-        add_test(${test_name} ${test_name})
     endfunction()
 
-    custom_c_test(main_c)
+    custom_c_test(demo_c)
 
 endif()
