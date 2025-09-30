@@ -23,6 +23,8 @@ regex_pattern = r"""
 """
 
 g_out = []
+g_address = '127.0.0.1'
+g_port = 6024
 
 def patern_recive_data_and_store_level_message(self):
    data = self.request.recv(1024)
@@ -119,12 +121,14 @@ class MsgCriticalHandler(socketserver.BaseRequestHandler):
         patern_recive_data_and_store_level_message(self)
 
 
-def test_main_exec(writer='net', test='all', sleep=0.1):
+cnt=0
+def test_main_exec(writer='--net', test='--all', sleep=0.1):
     time.sleep(sleep)
+    if writer == '--net':
+        writer = f'{writer}={g_address}:{g_port+cnt}'
     p = Popen([paths.test_main, writer, test], stdout=PIPE)
     output = p.communicate()
     return output
-
 
 class CppDemoTesting(unittest.TestCase):
     def setUp(self) -> None:
@@ -134,32 +138,34 @@ class CppDemoTesting(unittest.TestCase):
     def base_fun(self, writer, test, handler):
         t1 = Thread(target=test_main_exec, args=(writer, test))
         t1.start()
-        with socketserver.TCPServer(('127.0.0.1', 6024), handler) as server:
+        global cnt
+        with socketserver.TCPServer((g_address, g_port+cnt), handler) as server:
             server.handle_request()
         t1.join()
+        cnt=cnt+1
 
     def test_msg_trace(self):
-        self.base_fun('net', 'msg_trace', MsgTraceHandler)
+        self.base_fun('--net', '--msg_trace', MsgTraceHandler)
         exp = ['TRACE', '--ENTER--', 'TRACE', '--EXIT--']
         self.assertEqual(g_out, exp)
 
     def test_threads(self):
-        self.base_fun('net', 'threads', ThreadsHandler)
+        self.base_fun('--net', '--threads', ThreadsHandler)
         exp = ['INFO ', 'hello', 'WARN ', 'world']
         self.assertEqual(set(g_out), set(exp))
 
     def test_msg_hello_world(self):
-        self.base_fun('net', 'msg_hello_world', MsgHelloWroldHandler)
+        self.base_fun('--net', '--msg_hello_world', MsgHelloWroldHandler)
         exp = ['DEBUG', 'hello world']
         self.assertEqual(g_out, exp)
 
     def test_msg_null(self):
-        self.base_fun('net', 'msg_null', MsgNullHandler)
+        self.base_fun('--net', '--msg_null', MsgNullHandler)
         exp = ['ERROR', '(null)']
         self.assertEqual(g_out, exp)
 
     def test_msg_critical(self):
-        self.base_fun('net', 'msg_critical', MsgCriticalHandler)
+        self.base_fun('--net', '--msg_critical', MsgCriticalHandler)
         exp = ['CRITI' , "run out of chocolate for 1 time!"]
         self.assertEqual(g_out, exp)
 

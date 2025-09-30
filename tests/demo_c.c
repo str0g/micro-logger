@@ -34,14 +34,20 @@ static void usage(const char *prog) {
           prog, default_address, default_port, default_file);
 }
 
-static int worker(void *arg) {
+static int worker_info(void *arg) {
   MSG_INFO("%s %016llu", arg, pthread_self());
   return 0;
 }
+
+static int worker_warn(void *arg) {
+  MSG_WARN("%s %016llu", arg, pthread_self());
+  return 0;
+}
+
 static void threads() {
   thrd_t t1, t2;
-  thrd_create(&t1, worker, "hello");
-  thrd_create(&t2, worker, "world");
+  thrd_create(&t1, worker_info, "hello");
+  thrd_create(&t2, worker_warn, "world");
 
   thrd_join(t1, NULL);
   thrd_join(t2, NULL);
