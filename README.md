@@ -26,7 +26,7 @@ CPP demo
 ```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/demo help```
 ###
 C demo
-```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/backport/demo_c```
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/backport/demo_c --help```
 
 # Performance changes:
 Hardware: 9800X3D, 96GB 6400, Goodram IRPRO 4TB

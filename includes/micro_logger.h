@@ -19,6 +19,8 @@ extern "C" {
  * keep default size while customizing.
  * - runtime file name shifting
  */
+void *micro_logger_get_silent_writer();
+
 void *micro_logger_get_stdout_writer();
 
 void *micro_logger_get_net_writer(const char *address, int port);
