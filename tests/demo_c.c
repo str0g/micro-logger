@@ -53,13 +53,87 @@ static void threads() {
   thrd_join(t2, NULL);
 }
 
+static size_t to_kilobytes(size_t bytes) { return bytes / (1024); }
+
+static size_t to_megabytes(size_t bytes) { return bytes / (1024 * 1024); }
+
+static double to_bandwidth_mb_s(size_t bytes, long time) {
+  return (double)to_megabytes(bytes) / ((double)time / 1000);
+}
+
+static long elapsed_ms(struct timespec start, struct timespec end) {
+  return (end.tv_sec - start.tv_sec) * 1000L +
+         (end.tv_nsec - start.tv_nsec) / 1000000L;
+}
+
+static int bench_fun(void *in) {
+  size_t data_set_size = *((size_t *)in);
+  for (size_t i = 0; i < data_set_size * 10; ++i) {
+    MSG_ENTER();
+    MSG_DEBUG("this logging [%s] is specialy crafted to write numbers: "
+              "[%ld] and [pi]:%f",
+              "message", i, (3.14 * i));
+    MSG_INFO("my super shot logging message");
+    MSG_WARN("This is warninig message");
+    MSG_ERROR("Sometimes errors happens");
+    MSG_CRITICAL("Critiacal errors happens");
+    MSG_EXIT();
+  }
+  return 0;
+}
+
+static void benchmark() {
+  micro_logger_set_writer(micro_logger_get_file_writer("/dev/null"));
+  {
+    struct timespec start, end;
+    timespec_get(&start, TIME_UTC);
+    size_t data_set_size = 50000;
+
+    for (size_t i = 0; i < data_set_size; ++i) {
+      MSG_ENTER();
+      MSG_DEBUG("this logging [%s] is specialy crafted to write numbers: "
+                "[%08ld] and [pi]:%08f",
+                "message", i, (3.14 * i));
+      MSG_INFO("my super shot logging message");
+      MSG_WARN("This is warninig message");
+      MSG_ERROR("Sometimes errors happens");
+      MSG_CRITICAL("Critiacal errors happens");
+      MSG_EXIT();
+    }
+    timespec_get(&end, TIME_UTC);
+    long time_ms = elapsed_ms(start, end);
+    size_t total_size = data_set_size * 907;
+    fprintf(stdout,
+            "single thread took %ldms, size: %lu bandwidth: %.2f MB/s\n",
+            time_ms, total_size, to_bandwidth_mb_s(total_size, time_ms));
+  }
+  {
+    struct timespec start, end;
+    timespec_get(&start, TIME_UTC);
+    size_t data_set_size = 100;
+    thrd_t threads[data_set_size];
+    for (size_t i = 0; i < data_set_size; ++i) {
+      thrd_create(&threads[i], bench_fun, &data_set_size);
+    }
+    for (size_t i = 0; i < data_set_size; ++i) {
+      thrd_join(threads[i], NULL);
+    }
+    timespec_get(&end, TIME_UTC);
+    long time_ms = elapsed_ms(start, end);
+    size_t total_size = data_set_size * 907 * (data_set_size * 10);
+    fprintf(stdout, "multithread took %ldms, size: %lu bandwidth: %.2f MB/s\n",
+            time_ms, total_size, to_bandwidth_mb_s(total_size, time_ms));
+  }
+}
+
 enum Scenerios {
   DO_NOTHING = 0x0,
   MSG_HELLO_WORLD = 0x01,
   MSG_NULL = 0x02,
   MSG_TRACE = 0x04,
   MSG_CRITICAL_ = 0x08,
-  THREADS = 0x10
+  THREADS = 0x10,
+  BENCHMARK = 0x20
 };
 
 int main(int argc, char *argv[]) {
@@ -77,6 +151,7 @@ int main(int argc, char *argv[]) {
       {"msg_trace", no_argument, NULL, MSG_TRACE},
       {"msg_critical", no_argument, NULL, MSG_CRITICAL_},
       {"threads", no_argument, NULL, THREADS},
+      {"benchmark", no_argument, NULL, BENCHMARK},
       {NULL, 0, NULL, 0}};
 
   const char *short_opts = "hn::f::os";
@@ -132,6 +207,9 @@ int main(int argc, char *argv[]) {
     case THREADS:
       threads();
       break;
+    case BENCHMARK:
+      benchmark();
+      return 0;
     case '?':
     default:
       if (optopt) {

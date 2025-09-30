@@ -13,6 +13,7 @@ On some system adding ```LD_PRELOAD=$(gcc -print-file-name=libasan.so)``` might 
 
 ### Testing for performance changes
 ```ninja -C out/ && out/benchmark all```
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/backport/demo_c --benchmark```
 
 ### Integration testing with python 
 Caching issues with formatting or library
@@ -41,3 +42,5 @@ Hardware: 9800X3D, 96GB 6400, Goodram IRPRO 4TB
 |thread_info            |cache creation   |580ms          |No perf gain   |     |
 |bench_logging_bandwidth|write one thread |66.15 MB/s     |               |     |
 |bench_logging_bandwidth|write multithread|94.84 MB/s     |               |     |
+|C bench logging        |single thread    |58.82 MB/s     |               |     |
+|C bench logging        |multithread      |99.19 MB/s     |               |     |
