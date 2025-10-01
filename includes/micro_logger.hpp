@@ -32,15 +32,15 @@ void set_writer(const BaseWriter &);
 void __logme(const char *level, const char *file, const char *func, int line,
              const char *fmt, ...);
 
-consteval const char *basename(const char *const path) {
-  int slash_index = -1;
+constexpr const char *basename(const char *const path) {
+  int slash_index = 0;
   int index = 0;
   do {
-    if (path[index] == '/') {
-      slash_index = index + 1;
+    if (path[index++] == '/') {
+      slash_index = index;
     }
-  } while (path[index++]);
-  return &path[slash_index == -1 ? 0 : slash_index];
+  } while (path[index]);
+  return &path[slash_index];
 }
 
 #ifndef NODEBUG

@@ -32,6 +32,8 @@ void micro_logger_set_writer(void *);
 void micro_logger_logme(const char *level, const char *file, const char *func,
                         int line, const char *fmt, ...);
 
+const char *current_file_name_only(const char *const filename);
+
 #ifndef NODEBUG
 extern const char *LVL_TRACE;
 extern const char *LVL_DEBUG;
@@ -41,8 +43,7 @@ extern const char *LVL_WARN;
 extern const char *LVL_ERROR;
 extern const char *LVL_CRITICAL;
 
-#define CURRENT_FILE_NAME_ONLY_                                                \
-  (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__) // runtime
+#define CURRENT_FILE_NAME_ONLY_ current_file_name_only(__FILE__)
 
 #ifndef NODEBUG
 #define MSG_DEBUG(fmt, ...)                                                    \
