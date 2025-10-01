@@ -17,8 +17,8 @@ thread_local ThreadInfo thead_info;
 const micro_logger_CustomParameters *custom_parameters = nullptr;
 std::mutex sync_write;
 
-void set_custom_parameters(micro_logger_CustomParameters *) {
-  custom_parameters = &default_parameters;
+void set_custom_parameters(micro_logger_CustomParameters *custom) {
+  custom_parameters = custom;
 }
 
 const BaseWriter *custom_writer = nullptr;
@@ -32,7 +32,7 @@ std::string init_header_formatter() {
     custom_parameters = &default_parameters;
   }
 
-  char buf[128];
+  char buf[custom_parameters->header_size];
   std::snprintf(buf, sizeof(buf), "[%%s]%s[%%%ss:%%%sd::%%s][%%s]\n",
                 thead_info.info.c_str(),
                 custom_parameters->align_filename_length,
