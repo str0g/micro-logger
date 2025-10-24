@@ -2,13 +2,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
-cmake_minimum_required(VERSION 3.5)
-project(micro_logger VERSION 0.1 LANGUAGES C)
+cmake_minimum_required(VERSION 3.21)
+project(micro_logger VERSION 0.2 LANGUAGES C)
 
 option(WITH_TESTS "Enable unit tests" ON)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
+
+configure_file(../package/micro_logger.pc.in micro_logger.pc @ONLY)
 
 if(WITH_TESTS)
     enable_testing()

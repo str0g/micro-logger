@@ -1,7 +1,7 @@
 # Maintainer: Łukasz Buśko <lukasz.busko@guns4hire.cc>
 
 pkgname=micro_logger++
-pkgver=0.1
+pkgver=0.2
 pkgrel=1
 arch=('any')
 
@@ -20,7 +20,7 @@ license=('MPL')
 
 build() {
   cd micro-logger
-  cmake . -GNinja -DCMAKE_BUILD_TYPE=Release
+  cmake . -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
   ninja
 }
 
@@ -35,5 +35,6 @@ package() {
     install -Dm644 "$file" "$pkgdir/usr/include/micro_logger/"
   done
   install -dm755 "$pkgdir/usr/share/pkgconfig/"
-  install -Dm644 "package/micro_logger.pc" "$pkgdir/usr/share/pkgconfig/"
+  install -Dm644 "backport/micro_logger.pc" "$pkgdir/usr/share/pkgconfig/"
+  install -Dm644 "micro_logger++.pc" "$pkgdir/usr/share/pkgconfig/"
 }
