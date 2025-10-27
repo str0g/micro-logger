@@ -13,7 +13,6 @@
 #include <stdarg.h>
 
 namespace micro_logger {
-thread_local ThreadInfo thead_info;
 const micro_logger_CustomParameters *custom_parameters = nullptr;
 std::mutex sync_write;
 
@@ -28,13 +27,14 @@ void set_writer(const BaseWriter &writer) {
 }
 
 std::string init_header_formatter() {
+  thread_local ThreadInfo thread_info;
   if (!custom_parameters) {
     custom_parameters = &default_parameters;
   }
 
   char buf[custom_parameters->header_size];
   std::snprintf(buf, sizeof(buf), "[%%s]%s[%%%ss:%%%sd::%%s][%%s]\n",
-                thead_info.info.c_str(),
+                thread_info.info.c_str(),
                 custom_parameters->align_filename_length,
                 custom_parameters->align_lines_length);
   return buf;
