@@ -67,6 +67,27 @@ void threads() {
   th2.join();
 }
 
+class SampleSingletonClass {
+public:
+  static SampleSingletonClass &get_instance() {
+    static SampleSingletonClass obj;
+    return obj;
+  }
+  ~SampleSingletonClass() {
+    MSG_ENTER();
+    MSG_EXIT();
+  }
+
+private:
+  SampleSingletonClass(const SampleSingletonClass &) = delete;
+  SampleSingletonClass(SampleSingletonClass &&) = delete;
+  SampleSingletonClass& operator=(const SampleSingletonClass &) = delete;
+  SampleSingletonClass& operator=(SampleSingletonClass &&) = delete;
+  SampleSingletonClass() = default;
+};
+
+void singleton() { auto &obj = SampleSingletonClass::get_instance(); }
+
 /**
  * for main out_of_range error is reserved exception.
  * If being throw in other case then "option all" expect unexpected.
@@ -81,6 +102,7 @@ int main(int argc, char **argv) {
       {"--msg_trace", msg_trace},
       {"--msg_critical", msg_critical},
       {"--threads", threads},
+      {"--singleton", singleton},
       {"--net", set_network_writer},
       {"--file", set_file_writer},
       {"--stdo", set_stdo_writer},
