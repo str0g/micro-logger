@@ -8,4 +8,4 @@ package/src
 package/micro-logger
 package/micro_logger*zst
 .cache
-out/
+build

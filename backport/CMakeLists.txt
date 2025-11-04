@@ -10,16 +10,12 @@ option(WITH_TESTS "Enable unit tests" ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+aux_source_directory(../src BACKPORT_SRC)
+add_library(${PROJECT_NAME} SHARED ${BACKPORT_SRC} micro_logger.cpp)
+target_compile_options(${PROJECT_NAME} PRIVATE -DUSE_C_VERSION=1)
+
 configure_file(../package/micro_logger.pc.in micro_logger.pc @ONLY)
 
-if(WITH_TESTS)
-    enable_testing()
-
-    function(custom_c_test test_name)
-        add_executable(${test_name} ../tests/${test_name}.c)
-        target_link_libraries(${test_name} LINK_PUBLIC ${PROJECT_NAME} -lpthread)
-    endfunction()
-
-    custom_c_test(demo_c)
-
+if(WITH_MICRO_LOGGER_TESTS)
+  custom_c_test(demo_c)
 endif()

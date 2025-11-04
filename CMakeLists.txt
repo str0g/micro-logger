@@ -2,18 +2,29 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.23)
 project(micro_logger++ VERSION 0.2 LANGUAGES CXX)
 
 option(WITH_MICRO_LOGGER_TESTS "Enable unit tests" OFF)
-include(GoogleTest)
+option(WITH_SANITIZER "Enable sanitizer" OFF)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+if (${WITH_SANITIZER})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+endif()
+
+if(WITH_MICRO_LOGGER_TESTS)
+include(cmake/gtest_wrapper.cmake)
+include(cmake/other_tests.cmake)
+
+enable_testing()
+
+custom_test_app(demo)
+custom_test_app(benchmark)
+custom_gtest(test_hex)
+
 endif()
 
 include_directories(includes)
@@ -38,33 +49,8 @@ install(TARGETS ${PROJECT_NAME}
 
 install(DIRECTORY includes/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-aux_source_directory(backport SRC_BACKPORT)
-add_library(micro_logger SHARED ${SRC_BACKPORT} ${SRC})
-target_compile_options(micro_logger PRIVATE -DUSE_C_VERSION=1)
+
 add_subdirectory(backport)
 
 configure_file(package/micro_logger.pc.in micro_logger++.pc @ONLY)
 
-if(WITH_MICRO_LOGGER_TESTS)
-enable_testing()
-
-function(custom_test test_name)
-    add_executable(${test_name} tests/${test_name}.cpp)
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}")
-    target_link_libraries(${test_name} LINK_PUBLIC ${PROJECT_NAME} -lpthread)
-endfunction()
-
-function(custom_gtest test_name)
-    add_executable(${test_name} tests/${test_name}.cpp)
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}")
-    target_link_libraries(${test_name} LINK_PUBLIC ${PROJECT_NAME} -lpthread -lgtest -lgtest_main)
-    gtest_add_tests(
-      TARGET ${test_name}
-    )
-endfunction()
-
-custom_test(demo)
-custom_test(benchmark)
-custom_gtest(test_hex)
-
-endif()

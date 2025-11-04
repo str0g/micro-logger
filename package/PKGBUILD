@@ -1,7 +1,7 @@
 # Maintainer: Łukasz Buśko <lukasz.busko@guns4hire.cc>
 
 pkgname=micro_logger++
-pkgver=0.2
+pkgver=0.21
 pkgrel=1
 arch=('any')
 
@@ -20,8 +20,8 @@ license=('MPL')
 
 build() {
   cd micro-logger
-  cmake . -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
-  ninja
+  cmake --preset release
+  cmake --build build/release
 }
 
 package() {
