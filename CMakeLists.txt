@@ -36,21 +36,24 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/micro_logger)
+add_subdirectory(backport)
 
+#Installetion part
 include(GNUInstallDirs)
+
+configure_file(package/micro_logger.pc.in micro_logger++.pc @ONLY)
+
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/micro_logger++.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
+
 install(TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}Targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-install(DIRECTORY includes/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-
-add_subdirectory(backport)
-
-configure_file(package/micro_logger.pc.in micro_logger++.pc @ONLY)
+install(DIRECTORY includes/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/micro_logger)
 

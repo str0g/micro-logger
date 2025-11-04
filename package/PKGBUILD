@@ -1,7 +1,7 @@
 # Maintainer: Łukasz Buśko <lukasz.busko@guns4hire.cc>
 
 pkgname=micro_logger++
-pkgver=0.21
+pkgver=0.22
 pkgrel=1
 arch=('any')
 
@@ -20,21 +20,11 @@ license=('MPL')
 
 build() {
   cd micro-logger
-  cmake --preset release
+  cmake --preset release --install-prefix=$pkgdir/usr
   cmake --build build/release
 }
 
 package() {
   cd micro-logger
-  install -dm755 "$pkgdir/usr/lib/"
-	install -Dm755 "libmicro_logger.so" "$pkgdir/usr/lib/"
-	install -Dm755 "libmicro_logger++.so" "$pkgdir/usr/lib/"
-  install -dm755 "$pkgdir/usr/include/micro_logger"
-  for file in $(find includes -type f)
-  do
-    install -Dm644 "$file" "$pkgdir/usr/include/micro_logger/"
-  done
-  install -dm755 "$pkgdir/usr/share/pkgconfig/"
-  install -Dm644 "backport/micro_logger.pc" "$pkgdir/usr/share/pkgconfig/"
-  install -Dm644 "micro_logger++.pc" "$pkgdir/usr/share/pkgconfig/"
+  cmake --install build/release
 }

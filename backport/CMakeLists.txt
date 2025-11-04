@@ -16,6 +16,18 @@ target_compile_options(${PROJECT_NAME} PRIVATE -DUSE_C_VERSION=1)
 
 configure_file(../package/micro_logger.pc.in micro_logger.pc @ONLY)
 
+install(TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}Targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/micro_logger.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
+
 if(WITH_MICRO_LOGGER_TESTS)
   custom_c_test(demo_c)
 endif()
