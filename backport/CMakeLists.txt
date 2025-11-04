@@ -13,6 +13,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 aux_source_directory(../src BACKPORT_SRC)
 add_library(${PROJECT_NAME} SHARED ${BACKPORT_SRC} micro_logger.cpp)
 target_compile_options(${PROJECT_NAME} PRIVATE -DUSE_C_VERSION=1)
+target_include_directories(${PROJECT_NAME} PUBLIC ../includes)
 
 configure_file(../package/micro_logger.pc.in micro_logger.pc @ONLY)
 
