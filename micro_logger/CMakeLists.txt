@@ -10,12 +10,15 @@ option(WITH_TESTS "Enable unit tests" ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-aux_source_directory(../src BACKPORT_SRC)
-add_library(${PROJECT_NAME} SHARED ${BACKPORT_SRC} micro_logger.cpp)
+add_library(${PROJECT_NAME} SHARED src/micro_logger.cpp)
 target_compile_options(${PROJECT_NAME} PRIVATE -DUSE_C_VERSION=1)
-target_include_directories(${PROJECT_NAME} PUBLIC ../includes)
+target_link_libraries(${PROJECT_NAME} micro_logger++)
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/micro_logger>
+)
 
-configure_file(../package/micro_logger.pc.in micro_logger.pc @ONLY)
+configure_file(../package/micro_logger.pc.in ${PROJECT_NAME}.pc @ONLY)
 
 install(TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}Targets
@@ -24,11 +27,13 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
+
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/micro_logger.pc
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
-if(WITH_MICRO_LOGGER_TESTS)
-  custom_c_test(demo_c)
+if(WITH_MICRO_LOGGER_DEMOS)
+  custom_app_test_c(demo)
 endif()

@@ -13,8 +13,8 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       },
       "hidden": true
     },
@@ -24,8 +24,9 @@
       "inherits": "default",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "WITH_SANITIZER": "On",
-        "WITH_MICRO_LOGGER_TESTS": "On"
+        "WITH_MICRO_LOGGER_DEMOS": "On",
+        "WITH_MICRO_LOGGER_TESTS": "On",
+        "WITH_SANITIZER": "On"
       }
     },
     {

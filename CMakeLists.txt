@@ -5,26 +5,36 @@
 cmake_minimum_required(VERSION 3.23)
 project(micro_logger++ VERSION 0.23 LANGUAGES CXX)
 
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+option(WITH_MICRO_LOGGER_DEMOS "Enable demo applications" OFF)
 option(WITH_MICRO_LOGGER_TESTS "Enable unit tests" OFF)
 option(WITH_SANITIZER "Enable sanitizer" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/micro_logger
+    CACHE PATH "Location of header files" )
 
 if (${WITH_SANITIZER})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 endif()
 
-if(WITH_MICRO_LOGGER_TESTS)
-include(cmake/gtest_wrapper.cmake)
-include(cmake/other_tests.cmake)
+if(${WITH_MICRO_LOGGER_DEMOS})
+  include(cmake/other_tests.cmake)
+endif()
 
-enable_testing()
+if(${WITH_MICRO_LOGGER_TESTS})
+  include(cmake/gtest_wrapper.cmake)
+  enable_testing()
 
-custom_test_app(demo)
-custom_test_app(benchmark)
-custom_gtest(test_hex)
+  custom_gtest(test_hex)
+endif()
 
+if(${WITH_MICRO_LOGGER_DEMOS})
+  custom_test_app(demo)
+  custom_test_app(benchmark)
 endif()
 
 aux_source_directory(src SRC)
@@ -34,13 +44,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include/micro_logger>
 )
 
-add_subdirectory(backport)
-
-#Installetion part
-set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/micro_logger
-    CACHE PATH "Location of header files" )
-#
-include(GNUInstallDirs)
+add_subdirectory(micro_logger)
 
 configure_file(package/micro_logger.pc.in micro_logger++.pc @ONLY)
 
@@ -57,8 +61,6 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 install(DIRECTORY includes/ DESTINATION ${INCLUDE_INSTALL_DIR})
-
-include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/micro_loggerConfigVersion.cmake"
