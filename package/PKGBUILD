@@ -19,12 +19,12 @@ pkgdesc="Simple fast logger which can send logs to stdout, file, network or no w
 license=('MPL')
 
 build() {
-  cd micro-logger
+  test -d micro_logger && cd micro_logger || cd ..
   cmake --preset release --install-prefix=$pkgdir/usr
   cmake --build build/release
 }
 
 package() {
-  cd micro-logger
+  test -d micro_logger && cd micro_logger || cd ..
   cmake --install build/release
 }

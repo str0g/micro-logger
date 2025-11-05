@@ -1,7 +1,11 @@
 # How to build
 Preferable building method for testing and development
 
-```cmake . -Bout -GNinja -DWITH_MICRO_LOGGER_TESTS=ON -DCMAKE_BUILD_TYPE=Debug```
+### release build
+```make debug```
+
+### debug build
+```make debug```
 
 # How to test
 
@@ -9,25 +13,34 @@ Preferable building method for testing and development
 On some system adding ```LD_PRELOAD=$(gcc -print-file-name=libasan.so)``` might be required
 
 ### Unit testing
-```ninja -C out/ && ctest --test-dir out --output-on-failure```
+```make test```
 
 ### Testing for performance changes
-```ninja -C out/ && out/benchmark all```
-```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/backport/demo_c --benchmark```
+```build/<profile>/demos/benchmark all```
+
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) build/<profile>/micro_logger/demos/demo_c --benchmark```
 
 ### Integration testing with python 
 Caching issues with formatting or library
+
 ```LD_PRELOAD=$(gcc -print-file-name=libasan.so) python test_library.py```
+
+# Build package for your distribution
+Currently only archlinux is supported
+
+```make pkg```
 
 # How to develope
 @TODO
 
 # How to use
 CPP demo
-```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/demo help```
-###
+
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) build/<profile>/demos/demo help```
+
 C demo
-```LD_PRELOAD=$(gcc -print-file-name=libasan.so) out/backport/demo_c --help```
+
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) build/<profile>/micro_logger/demos/demo_c --help```
 
 # Performance changes:
 Hardware: 9800X3D, 96GB 6400, Goodram IRPRO 4TB

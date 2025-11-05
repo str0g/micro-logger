@@ -9,3 +9,5 @@ package/micro-logger
 package/micro_logger*zst
 .cache
 build
+PKGBUILD
+pkg
