@@ -2,7 +2,7 @@
 
 BUILD_DIR := build
 
-.PHONY: all list_presets test help release debug pkg
+.PHONY: all list_presets test help pkg
 
 all: debug
 

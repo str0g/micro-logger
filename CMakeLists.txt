@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
 cmake_minimum_required(VERSION 3.23)
-project(micro_logger++ VERSION 0.23 LANGUAGES CXX)
+project(micro_logger_project VERSION 0.24 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -28,39 +28,10 @@ endif()
 if(${WITH_MICRO_LOGGER_TESTS})
   include(cmake/gtest_wrapper.cmake)
   enable_testing()
-
-  custom_gtest(test_hex)
 endif()
 
-if(${WITH_MICRO_LOGGER_DEMOS})
-  custom_test_app(demo)
-  custom_test_app(benchmark)
-endif()
-
-aux_source_directory(src SRC)
-add_library(${PROJECT_NAME} SHARED ${SRC})
-target_include_directories(${PROJECT_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes>
-    $<INSTALL_INTERFACE:include/micro_logger>
-)
-
+add_subdirectory(micro_logger++)
 add_subdirectory(micro_logger)
-
-configure_file(package/micro_logger.pc.in micro_logger++.pc @ONLY)
-
-install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/micro_logger++.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
-
-install(TARGETS ${PROJECT_NAME}
-    EXPORT ${PROJECT_NAME}Targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-install(DIRECTORY includes/ DESTINATION ${INCLUDE_INSTALL_DIR})
 
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/micro_loggerConfigVersion.cmake"
@@ -79,7 +50,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/micro_loggerConfig.cmake
               ${CMAKE_CURRENT_BINARY_DIR}/micro_loggerConfigVersion.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/micro_logger)
 
-install(EXPORT ${PROJECT_NAME}Targets
+install(EXPORT micro_logger++Targets
     FILE micro_loggerTargets.cmake
     NAMESPACE micro_logger::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/micro_logger
