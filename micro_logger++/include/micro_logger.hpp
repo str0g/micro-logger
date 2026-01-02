@@ -9,6 +9,7 @@
 
 #include "micro_logger_custom_paramters.h"
 #include "micro_logger_writer.hpp"
+#include <sstream>
 
 namespace micro_logger {
 /**
@@ -22,6 +23,17 @@ constexpr micro_logger_CustomParameters default_parameters{
  * this function called again is not going to do anything.
  */
 void set_writer(const BaseWriter &);
+
+/**
+ * To use this method class must implement friend stream operator<<
+ */
+template <class T>
+std::string to_string(const T& obj) {
+  std::stringstream os;
+  os << obj;
+  return os.str();
+}
+
 /**
  *  Do not use directly
  * @param level
