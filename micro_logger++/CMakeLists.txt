@@ -1,4 +1,4 @@
-project(micro_logger++ VERSION 0.23 LANGUAGES CXX)
+project(micro_logger++ VERSION 0.25 LANGUAGES CXX)
 
 aux_source_directory(src SRC)
 add_library(${PROJECT_NAME} SHARED ${SRC})
