@@ -2,7 +2,7 @@
 Preferable building method for testing and development
 
 ### release build
-```make debug```
+```make release```
 
 ### debug build
 ```make debug```
