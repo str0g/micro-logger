@@ -11,3 +11,4 @@ package/micro_logger*zst
 build
 PKGBUILD
 pkg
+micro_logger++-*
