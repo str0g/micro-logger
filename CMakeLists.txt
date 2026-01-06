@@ -12,7 +12,7 @@ option(WITH_MICRO_LOGGER_DEMOS "Enable demo applications" OFF)
 option(WITH_MICRO_LOGGER_TESTS "Enable unit tests" OFF)
 option(WITH_SANITIZER "Enable sanitizer" OFF)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/micro_logger
     CACHE PATH "Location of header files" )
