@@ -11,7 +11,7 @@ public:
     line_bufer.emplace_back(tmp);
     return size;
   }
-  static TestWriter &get_instatnce() {
+  inline static TestWriter &get_instatnce() {
     static TestWriter obj;
     return obj;
   }
