@@ -5,15 +5,15 @@
  */
 
 #include "thread_info.h"
-#include <iomanip>
 #include <format>
+#include <iomanip>
 
 namespace micro_logger {
 
 std::string ThreadInfo::formatter() {
   std::stringstream os;
   os << std::setw(16) << std::setfill('0') << tid;
-  return std::format("[pid:{:08}][tid:{}]", pid ,os.str());
+  return std::format("[pid:{:08}][tid:{}]", pid, os.str());
 }
 
 } // namespace micro_logger

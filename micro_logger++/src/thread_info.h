@@ -15,10 +15,10 @@ namespace micro_logger {
 class ThreadInfo {
 public:
   ThreadInfo() = default;
-  ThreadInfo(const ThreadInfo&) = delete;
-  ThreadInfo(ThreadInfo&&) = delete;
-  ThreadInfo& operator=(const ThreadInfo&) = delete;
-  ThreadInfo& operator=(ThreadInfo&&) = delete;
+  ThreadInfo(const ThreadInfo &) = delete;
+  ThreadInfo(ThreadInfo &&) = delete;
+  ThreadInfo &operator=(const ThreadInfo &) = delete;
+  ThreadInfo &operator=(ThreadInfo &&) = delete;
 
   const pid_t pid = getpid();
   const std::thread::id tid = std::this_thread::get_id();

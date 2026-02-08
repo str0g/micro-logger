@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
 #include "micro_logger_tools.hpp"
+//
 #include <charconv>
 #include <format>
 #include <iomanip>
@@ -34,7 +34,7 @@ std::vector<uint8_t> hex_to_bytes(const std::string &hex) {
   for (size_t i = 0; i < hex.length(); i += 2) {
     auto [ptr, ec] =
         std::from_chars(hex.data() + i, hex.data() + i + 2, byte, 16);
-    if ((ec != std::errc()) or (ptr == hex.data() + hex.size()-1)) {
+    if ((ec != std::errc()) or (ptr == hex.data() + hex.size() - 1)) {
       throw std::invalid_argument(
           std::format("data is incorrect [{}]", hex.substr(i, 2)));
     }

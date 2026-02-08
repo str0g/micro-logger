@@ -1,5 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 #include "micro_logger.hpp"
 #include "micro_logger_tools.hpp"
+//
 #include <chrono>
 #include <cstdint>
 #include <format>
@@ -211,7 +217,7 @@ void bench_logging_bandwidth() {
           std::vector<std::thread> data_set;
           for (size_t i = 0; i < data_set_size; ++i)
             data_set.emplace_back([i, data_set_size]() {
-              for (size_t i = 0; i < data_set_size*10; ++i) {
+              for (size_t i = 0; i < data_set_size * 10; ++i) {
                 MSG_ENTER();
                 MSG_DEBUG(
                     "this logging [%s] is specialy crafted to write numbers: "
@@ -227,7 +233,8 @@ void bench_logging_bandwidth() {
           for (auto &th : data_set)
             th.join();
         },
-        __func__, {"write multithread"}, 907 * data_set_size * (data_set_size *10));
+        __func__, {"write multithread"},
+        907 * data_set_size * (data_set_size * 10));
   }
 }
 

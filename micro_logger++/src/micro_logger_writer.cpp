@@ -3,9 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
 #include "micro_logger_writer.hpp"
-
+//
 #include <arpa/inet.h>
 #include <csignal>
 #include <cstring>
@@ -59,8 +58,7 @@ NetworkWriter::NetworkWriter(const std::string &address, int port)
   };
 
   if (sigaction(SIGPIPE, &action, nullptr) == -1) {
-    throw std::domain_error(
-        std::format("{}", strerrordesc_np(errno)));
+    throw std::domain_error(std::format("{}", strerrordesc_np(errno)));
   }
 }
 

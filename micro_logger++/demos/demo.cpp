@@ -3,15 +3,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "micro_logger.hpp"
+#include "micro_logger_writer.hpp"
+//
 #include <iostream>
 #include <memory>
 #include <set>
 #include <string>
 #include <thread>
 #include <unordered_map>
-
-#include "micro_logger.hpp"
-#include "micro_logger_writer.hpp"
 
 using namespace std::literals;
 
@@ -81,8 +81,8 @@ public:
 private:
   SampleSingletonClass(const SampleSingletonClass &) = delete;
   SampleSingletonClass(SampleSingletonClass &&) = delete;
-  SampleSingletonClass& operator=(const SampleSingletonClass &) = delete;
-  SampleSingletonClass& operator=(SampleSingletonClass &&) = delete;
+  SampleSingletonClass &operator=(const SampleSingletonClass &) = delete;
+  SampleSingletonClass &operator=(SampleSingletonClass &&) = delete;
   SampleSingletonClass() = default;
 };
 

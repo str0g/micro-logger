@@ -3,13 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
 #include "micro_logger.h"
-
-#include <cstring>
-#include <stdarg.h>
-
 #include "micro_logger.hpp"
+//
+#include <stdarg.h>
 
 const char *LVL_TRACE = micro_logger::LVL_TRACE;
 const char *LVL_DEBUG = micro_logger::LVL_DEBUG;

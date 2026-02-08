@@ -1,5 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 #include "common.h"
 #include "micro_logger.hpp"
+//
 #include <gtest/gtest.h>
 #include <ostream>
 #include <ranges>
@@ -191,7 +197,8 @@ TEST_F(TestPatterns, tid) {
     MSG_WARN("warning");
     std::this_thread::sleep_for(10ms);
   });
-  //reason for this construction fast enough so thread is still alive slow enought it's not yet ready to be joined.
+  // reason for this construction fast enough so thread is still alive slow
+  // enought it's not yet ready to be joined.
   std::this_thread::sleep_for(2ms);
   int line_num_after_thread = __LINE__;
   MSG_INFO("info");

@@ -5,9 +5,8 @@
 #! /usr/bin/python3
 
 import ctypes
-from ctypes import POINTER, string_at, c_char_p, c_int, c_void_p, pointer, byref
+from ctypes import string_at, c_char_p, c_int, c_void_p
 import unittest
-#
 from common import PathToObjects, get_linenumber, get_function_name
 
 paths = PathToObjects()
@@ -27,14 +26,15 @@ class LibStdOutTesting(unittest.TestCase):
         self.lvl_critical = string_at(c_char_p.in_dll(c_lib, "LVL_CRITICAL"))
 
     def test_msg_send_something(self):
-        c_lib.micro_logger_logme(self.lvl_info,
-                                 c_char_p(b'file'),
-                                 c_char_p(get_function_name().encode('utf-8')),
-                                 c_int(get_linenumber()),
-                                 c_char_p(b'python is %s'),
-                                 c_char_p(b'awesome')
-                                 )
+        c_lib.micro_logger_logme(
+            self.lvl_info,
+            c_char_p(b"file"),
+            c_char_p(get_function_name().encode("utf-8")),
+            c_int(get_linenumber()),
+            c_char_p(b"python is %s"),
+            c_char_p(b"awesome"),
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

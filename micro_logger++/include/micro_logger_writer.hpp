@@ -3,7 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
 #ifndef MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP
 #define MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP
 

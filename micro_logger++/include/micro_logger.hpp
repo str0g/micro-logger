@@ -3,12 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
 #ifndef MICRO_LOGGER_MICRO_LOGGER_HPP
 #define MICRO_LOGGER_MICRO_LOGGER_HPP
 
 #include "micro_logger_custom_paramters.h"
 #include "micro_logger_writer.hpp"
+//
 #include <sstream>
 
 namespace micro_logger {
@@ -27,8 +27,7 @@ void set_writer(const BaseWriter &);
 /**
  * To use this method class must implement friend stream operator<<
  */
-template <class T>
-std::string to_string(const T& obj) {
+template <class T> std::string to_string(const T &obj) {
   std::stringstream os;
   os << obj;
   return os.str();
