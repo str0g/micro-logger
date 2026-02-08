@@ -60,8 +60,13 @@ size_t get_time(char *output) {
           current_time_since_epoch)
           .count() %
       1000};
-  auto size = std::strftime(output, custom_parameters->header_size,
-                            custom_parameters->time_format, std::localtime(&t));
+  std::tm tm{};
+  auto time_info = ::localtime_r(&t, &tm);
+  size_t size = 0;
+  if (time_info) {
+    size = std::strftime(output, custom_parameters->header_size,
+                         custom_parameters->time_format, time_info);
+  }
   if (size and custom_parameters->milliseconds_format) {
     size += std::snprintf(output + size, custom_parameters->header_size - size,
                           custom_parameters->milliseconds_format,
