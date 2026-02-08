@@ -25,7 +25,7 @@ public:
   const std::string info = std::move(formatter());
 
 private:
-  std::string formatter();
+  std::string formatter() const;
 };
 } // namespace micro_logger
 
