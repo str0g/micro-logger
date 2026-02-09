@@ -5,6 +5,7 @@
  */
 #include "micro_logger.hpp"
 #include "micro_logger_tools.hpp"
+#include "micro_logger_writer.hpp"
 //
 #include <chrono>
 #include <cstdint>
@@ -185,11 +186,12 @@ void bench_thread_local_cache() {
   }
 }
 
-void bench_logging_bandwidth() {
-  // data to write is 907bytes per one attempt
-  std::shared_ptr<micro_logger::BaseWriter> writer =
-      std::make_shared<micro_logger::FileWriter>("/dev/null");
-  micro_logger::initialize(*writer);
+template <typename T>
+concept HasRestartCapability = requires(T t) { t.restart(); };
+/*
+ * data to write is 907bytes per one attempt
+ * */
+template <typename T> void bench_logging_generic(T &obj) {
   {
     size_t data_set_size = 50000;
 
@@ -208,6 +210,9 @@ void bench_logging_bandwidth() {
           }
         },
         __func__, {"write one thread"}, 907 * data_set_size);
+  }
+  if constexpr (HasRestartCapability<T>) {
+    obj.restart();
   }
   {
     size_t data_set_size = 100;
@@ -236,6 +241,33 @@ void bench_logging_bandwidth() {
         __func__, {"write multithread"},
         907 * data_set_size * (data_set_size * 10));
   }
+  if constexpr (HasRestartCapability<T>) {
+    obj.restart();
+  }
+}
+
+void bench_logging_bandwidth() {
+  static micro_logger::FileWriter writer("/dev/null");
+  micro_logger::initialize(writer);
+  bench_logging_generic(writer);
+}
+
+void bench_logging_bandwidth_async() {
+  std::unique_ptr<micro_logger::BaseWriter> file_writer =
+      std::make_unique<micro_logger::FileWriter>("/dev/null");
+  class AsyncWriterTestImpl : public micro_logger::AsyncWriter {
+  public:
+    using AsyncWriter::AsyncWriter;
+    void restart() {
+      stop();
+      run = true;
+      auto new_th = std::thread([this]() { worker(); });
+      thread.swap(new_th);
+    }
+  };
+  static AsyncWriterTestImpl writer(file_writer);
+  micro_logger::initialize(writer);
+  bench_logging_generic(writer);
 }
 
 int main(int argc, char **argv) {
@@ -245,6 +277,7 @@ int main(int argc, char **argv) {
       {"bytes_to_integral", bench_bytes_to_integral},
       {"thread_local_cache", bench_thread_local_cache},
       {"logging_bandwidth", bench_logging_bandwidth},
+      {"logging_bandwidth_async", bench_logging_bandwidth_async},
   };
   for (int i = 1; i < argc; i++) {
     try {

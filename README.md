@@ -47,19 +47,21 @@ Hardware: 9800X3D, 96GB 6400, Goodram IRPRO 4TB
 
 ### Current performance:
 
-|Function               |test description |               |
-|:----------------------|-----------------|--------------:|
-|bench_bytes_to_hex     |short data set   |18.29 MB/s     |
-|bench_bytes_to_hex     |long data set    |35045.72 MB/s  |
-|bench_hex_to_bytes     |short data set   |3.76 MB/s      |
-|bench_hex_to_bytes     |long data set    |15.58 MB/s     |
-|bench_bytes_to_integral|int32            |230.77 MB/s    |
-|bench_bytes_to_integral|int64            |304.35 MB/s    |
-|thread_info            |cache creation   |1098ms         |
-|bench_logging_bandwidth|write one thread |109.14 MB/s    |
-|bench_logging_bandwidth|write multithread|164.44 MB/s    |
-|C bench logging        |single thread    |105.65 MB/s    |
-|C bench logging        |multithread      |255.19 MB/s    |
+|Function                     |test description |               |
+|:----------------------------|-----------------|--------------:|
+|bench_bytes_to_hex           |short data set   |18.29 MB/s     |
+|bench_bytes_to_hex           |long data set    |35045.72 MB/s  |
+|bench_hex_to_bytes           |short data set   |3.76 MB/s      |
+|bench_hex_to_bytes           |long data set    |15.58 MB/s     |
+|bench_bytes_to_integral      |int32            |230.77 MB/s    |
+|bench_bytes_to_integral      |int64            |304.35 MB/s    |
+|thread_info                  |cache creation   |1098ms         |
+|bench_logging_bandwidth      |write one thread |109.14 MB/s    |
+|bench_logging_bandwidth      |write multithread|164.44 MB/s    |
+|bench_logging_bandwidth_async|write one thread |68.04 MB/s     |
+|bench_logging_bandwidth_async|write multithread|58.46 MB/s     |
+|C bench logging              |single thread    |105.65 MB/s    |
+|C bench logging              |multithread      |255.19 MB/s    |
 
 ### Historical data:
 

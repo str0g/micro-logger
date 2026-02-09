@@ -6,7 +6,13 @@
 #ifndef MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP
 #define MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP
 
+#include <concepts>
+#include <condition_variable>
 #include <fstream>
+#include <memory>
+#include <mutex>
+#include <queue>
+#include <thread>
 
 namespace micro_logger {
 class BaseWriter {
@@ -57,6 +63,26 @@ private:
   void reconnect();
   void reset_socket();
 };
+
+class AsyncWriter : public BaseWriter {
+public:
+  explicit AsyncWriter(std::unique_ptr<BaseWriter> &output);
+  size_t write(const char *buf, size_t size) const final;
+  ~AsyncWriter();
+
+protected:
+  void stop();
+  void worker();
+
+protected:
+  mutable std::unique_ptr<BaseWriter> output;
+  mutable std::queue<std::string> queue;
+  mutable std::mutex sync;
+  mutable std::condition_variable cv;
+  std::thread thread;
+  bool run;
+};
+
 } // namespace micro_logger
 
 #endif // MICRO_LOGGER_MICRO_LOGGER_WRITER_HPP

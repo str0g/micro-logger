@@ -98,4 +98,42 @@ NetworkWriter::~NetworkWriter() {
   close(client_fd);
   instance = nullptr;
 }
+
+AsyncWriter::AsyncWriter(std::unique_ptr<BaseWriter> &output)
+    : output(std::move(output)),
+      thread(std::thread(&AsyncWriter::worker, this)), run(true) {}
+
+size_t AsyncWriter::write(const char *buf, size_t size) const {
+  {
+    std::scoped_lock lock(sync);
+    queue.emplace(buf, size);
+  }
+  cv.notify_all();
+  return size;
+}
+
+AsyncWriter::~AsyncWriter() { stop(); }
+void AsyncWriter::stop() {
+  {
+    std::scoped_lock lock(sync);
+    run = false;
+  }
+  cv.notify_all();
+  if (thread.joinable())
+    thread.join();
+}
+
+void AsyncWriter::worker() {
+  while (true) {
+    std::unique_lock lock(sync);
+    cv.wait(lock, [&]() { return not queue.empty() or not run; });
+    if (not run and queue.empty()) {
+      return;
+    }
+    auto data = std::move(queue.front());
+    queue.pop();
+    lock.unlock();
+    output->write(data.data(), data.size());
+  }
+}
 } // namespace micro_logger
