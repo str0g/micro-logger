@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
 cmake_minimum_required(VERSION 3.21)
-project(micro_logger VERSION 0.2 LANGUAGES C)
+project(micro_logger VERSION 0.3 LANGUAGES C)
 
 option(WITH_TESTS "Enable unit tests" ON)
 

@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
 cmake_minimum_required(VERSION 3.23)
-project(micro_logger_project VERSION 0.25 LANGUAGES CXX)
+project(micro_logger_project VERSION 0.30 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)

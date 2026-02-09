@@ -1,7 +1,7 @@
 # Maintainer: Łukasz Buśko <lukasz.busko@guns4hire.cc>
 
 pkgname=micro_logger++
-pkgver=0.25
+pkgver=0.30
 pkgrel=1
 arch=('any')
 
