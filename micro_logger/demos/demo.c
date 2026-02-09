@@ -31,7 +31,8 @@ static void usage(const char *prog) {
           "      --msg_null         Prints message with NULL value\n"
           "      --msg_trace        Prints enter/exit traces\n"
           "      --msg_critical     Prints message on critical level\n"
-          "      --threads          Prints message from 2 threads\n",
+          "      --threads          Prints message from 2 threads\n"
+          "      --benchmark        Run build in benchmark\n",
           prog, default_address, default_port, default_file);
 }
 
