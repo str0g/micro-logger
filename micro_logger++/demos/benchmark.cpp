@@ -170,7 +170,7 @@ void bench_thread_local_cache() {
   {
     std::shared_ptr<micro_logger::BaseWriter> writer =
         std::make_shared<micro_logger::SilentWriter>();
-    set_writer(*writer);
+    micro_logger::initialize(*writer);
     size_t data_set_size = 10000;
 
     auto exec_time = bench(
@@ -189,7 +189,7 @@ void bench_logging_bandwidth() {
   // data to write is 907bytes per one attempt
   std::shared_ptr<micro_logger::BaseWriter> writer =
       std::make_shared<micro_logger::FileWriter>("/dev/null");
-  set_writer(*writer);
+  micro_logger::initialize(*writer);
   {
     size_t data_set_size = 50000;
 

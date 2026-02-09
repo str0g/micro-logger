@@ -39,12 +39,12 @@ void *micro_logger_get_file_writer(const char *path) {
   return &instance;
 }
 
-void micro_logger_set_writer(void *in) {
+void micro_logger_initialize(void *in, micro_logger_CustomParameters *parameters) {
   if (not in) {
     throw std::runtime_error("base writer can not be null");
   }
-  auto writer = reinterpret_cast<micro_logger::BaseWriter *>(in);
-  micro_logger::set_writer(*writer);
+  auto writer = static_cast<micro_logger::BaseWriter *>(in);
+  micro_logger::initialize(*writer, parameters);
 }
 
 void micro_logger_logme(const char *level, const char *file, const char *func,

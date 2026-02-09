@@ -23,22 +23,22 @@ std::string g_file{"log.txt"};
 
 void set_network_writer() {
   writer = std::make_shared<micro_logger::NetworkWriter>(g_address, g_port);
-  set_writer(*writer);
+  micro_logger::initialize(*writer);
 }
 
 void set_file_writer() {
   writer = std::make_shared<micro_logger::FileWriter>(g_file.c_str());
-  set_writer(*writer);
+  micro_logger::initialize(*writer);
 }
 
 void set_stdo_writer() {
   writer = std::make_shared<micro_logger::StandardOutWriter>();
-  set_writer(*writer);
+  micro_logger::initialize(*writer);
 };
 
 void set_silent_writer() {
   writer = std::make_shared<micro_logger::SilentWriter>();
-  set_writer(*writer);
+  micro_logger::initialize(*writer);
 };
 
 void msg_hello_world() { MSG_DEBUG("hello world"); }

@@ -14,18 +14,19 @@
 #include <unordered_map>
 
 namespace micro_logger {
+const BaseWriter *custom_writer = nullptr;
 const micro_logger_CustomParameters *custom_parameters = nullptr;
 std::mutex sync_write;
 std::mutex sync_init_header_formatter;
 
-void set_custom_parameters(micro_logger_CustomParameters *custom) {
-  custom_parameters = custom;
-}
-
-const BaseWriter *custom_writer = nullptr;
-void set_writer(const BaseWriter &writer) {
-  if (not custom_writer)
+void initialize(const BaseWriter &writer,
+                const micro_logger_CustomParameters *parameters) {
+  if (not custom_writer) {
     custom_writer = &writer;
+  }
+  if (not custom_parameters) {
+    custom_parameters = parameters ? parameters : &default_parameters;
+  }
 }
 
 const std::string &init_header_formatter() {
@@ -37,12 +38,8 @@ const std::string &init_header_formatter() {
     return *obj;
   } else {
     ThreadInfo thread_info;
-    if (!custom_parameters) {
-      custom_parameters = &default_parameters;
-    }
-
     char buf[custom_parameters->header_size];
-    std::snprintf(buf, sizeof(buf), "[%%s]%s[%%%ss:%%%sd::%%s][%%s]\n",
+    std::snprintf(buf, sizeof(buf), custom_parameters->header_pattern,
                   thread_info.info.c_str(),
                   custom_parameters->align_filename_length,
                   custom_parameters->align_lines_length);

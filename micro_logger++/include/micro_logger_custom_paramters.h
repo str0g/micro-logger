@@ -8,11 +8,17 @@
 #define MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMTERS_H
 
 #include <sys/types.h>
+
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 struct micro_logger_CustomParameters {
-  size_t header_size;
-  size_t message_size;
+  size_t header_size;  // must be set to default value, future implementation
+                       // will allow to customize
+  size_t message_size; // minimal size is 1, for performance reason keep it bellow page size
+  const char *header_pattern; // must be set to default value, future
+                              // implementation will allow to customize
   const char *align_filename_length;
   const char *align_lines_length;
   /// https://en.cppreference.com/w/cpp/chrono/c/strftime
@@ -20,11 +26,8 @@ struct micro_logger_CustomParameters {
   const char *milliseconds_format; /// optional set tu nullptr if not used
 };
 
-/**
- * Use if need custom options and make sure that @DefaultParameters instance
- * will be available until program terminates
- */
-void set_custom_parameters(micro_logger_CustomParameters *);
+#ifdef __cplusplus
 }
+#endif
 
 #endif // MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMTERS_H

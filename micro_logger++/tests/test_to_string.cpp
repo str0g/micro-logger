@@ -22,7 +22,7 @@ public:
   }
 };
 
-void setup_logger() { micro_logger::set_writer(TestWriter::get_instatnce()); }
+void setup_logger() { micro_logger::initialize(TestWriter::get_instatnce()); }
 
 class TestToString : public ::testing::Test {
 public:

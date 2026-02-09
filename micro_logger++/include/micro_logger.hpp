@@ -16,13 +16,23 @@ namespace micro_logger {
  * for performance reasons keep @header_size + message_size below page size.
  */
 constexpr micro_logger_CustomParameters default_parameters{
-    128, 1024, "", "03", "[%D %T", ".%03ld]"};
+    .header_size = 128,
+    .message_size = 1024,
+    .header_pattern ="[%%s]%s[%%%ss:%%%sd::%%s][%%s]\n",
+    .align_filename_length = "",
+    .align_lines_length = "03",
+    .time_format = "[%D %T",
+    .milliseconds_format = ".%03ld]",
+};
 
 /**
- * Before any logging operation is mandatory to set writer
- * this function called again is not going to do anything.
+ * Before any logging operation is mandatory to call @initialze
+ * This function is going to setup things only once per process.
+ * @param custom_parameters use it only if don't want to use @default_parameters
  */
-void set_writer(const BaseWriter &);
+void initialize(
+    const BaseWriter &,
+    const micro_logger_CustomParameters *custom_parameters = nullptr);
 
 /**
  * To use this method class must implement friend stream operator<<

@@ -6,14 +6,14 @@
 #ifndef MICRO_LOGGER_MICRO_LOGGER_H
 #define MICRO_LOGGER_MICRO_LOGGER_H
 
+#include "micro_logger_custom_paramters.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 /**
  * C version has certain limitations
  * - definitely slower than c++ one.
- * - not configurable message size, check default one from @micro_logger.hpp and
- * keep default size while customizing.
  * - runtime file name shifting
  */
 void *micro_logger_get_silent_writer();
@@ -23,8 +23,14 @@ void *micro_logger_get_stdout_writer();
 void *micro_logger_get_net_writer(const char *address, int port);
 
 void *micro_logger_get_file_writer(const char *path);
-
-void micro_logger_set_writer(void *);
+/*
+ * @param use one of @micro_logger_get_silent_writer
+ * @micro_logger_get_stdout_writer @micro_logger_get_net_writer
+ * @micro_logger_get_file_writer to get correct writer
+ * @param parameter if not provided set to NULL
+ */
+void micro_logger_initialize(void *writer,
+                              struct micro_logger_CustomParameters *parameter);
 
 void micro_logger_logme(const char *level, const char *file, const char *func,
                         int line, const char *fmt, ...);

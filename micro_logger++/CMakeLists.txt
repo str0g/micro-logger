@@ -11,6 +11,7 @@ if(${WITH_MICRO_LOGGER_TESTS})
   custom_gtest(test_hex)
   custom_gtest(test_to_string)
   custom_gtest(test_pattern)
+  custom_gtest(test_custom_parameters)
 endif()
 
 if(${WITH_MICRO_LOGGER_DEMOS})

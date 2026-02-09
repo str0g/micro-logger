@@ -84,7 +84,7 @@ static int bench_fun(void *in) {
 }
 
 static void benchmark() {
-  micro_logger_set_writer(micro_logger_get_file_writer("/dev/null"));
+  micro_logger_initialize(micro_logger_get_file_writer("/dev/null"), NULL);
   {
     struct timespec start, end;
     timespec_get(&start, TIME_UTC);
@@ -177,20 +177,20 @@ int main(int argc, char *argv[]) {
         optarg[i - 1] = '\0';
         default_address = optarg;
       }
-      micro_logger_set_writer(
-          micro_logger_get_net_writer(default_address, default_port));
+      micro_logger_initialize(
+          micro_logger_get_net_writer(default_address, default_port), NULL);
       break;
     case 'f':
       if (optarg) {
         default_file = optarg;
       }
-      micro_logger_set_writer(micro_logger_get_file_writer(default_file));
+      micro_logger_initialize(micro_logger_get_file_writer(default_file), NULL);
       break;
     case 'o':
-      micro_logger_set_writer(micro_logger_get_stdout_writer());
+      micro_logger_initialize(micro_logger_get_stdout_writer(), NULL);
       break;
     case 's':
-      micro_logger_set_writer(micro_logger_get_silent_writer());
+      micro_logger_initialize(micro_logger_get_silent_writer(), NULL);
       break;
     case MSG_HELLO_WORLD:
       MSG_DEBUG("hello world");
