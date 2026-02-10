@@ -1,3 +1,13 @@
+# Key Features
+  - C++20 standard with high-performance design
+  - Dual interface: C API (micro_logger.h) and C++ API (micro_logger.hpp)
+  - Thread-safe multi-threaded logging
+  - Customizable logging levels: TRACE, DEBUG, INFO, WARN, ERROR, CRITICAL
+  - Configurable format with header patterns, timestamps, file/line/function info
+  - Async writer support
+  - Caching optimization for thread information
+  - Benchmarked performance up to ~273 MB/s logging bandwidth
+
 # How to build
 Preferable building method for testing and development
 
