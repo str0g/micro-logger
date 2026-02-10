@@ -33,7 +33,7 @@ class PathToObjects:
         for entry in output:
             try:
                 return entry.decode("utf-8")
-            except NoneType:
+            except TypeError:
                 pass
         raise NotADirectoryError
 
