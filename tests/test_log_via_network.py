@@ -9,7 +9,6 @@ import socketserver
 from subprocess import Popen, PIPE
 from threading import Thread
 import time
-import re
 from common import PathToObjects
 
 paths = PathToObjects()
@@ -26,7 +25,7 @@ g_address = "127.0.0.1"
 g_port = 6024
 
 
-def patern_recive_data_and_store_level_message(self):
+def patern_receive_data_and_store_level_message(self):
     data = self.request.recv(1024)
     regex = re.compile(regex_pattern, re.VERBOSE)
     match = regex.match(data.decode("utf-8"))
@@ -104,21 +103,21 @@ class MsgHelloWroldHandler(socketserver.BaseRequestHandler):
     allow_reuse_address = True
 
     def handle(self):
-        patern_recive_data_and_store_level_message(self)
+        patern_receive_data_and_store_level_message(self)
 
 
 class MsgNullHandler(socketserver.BaseRequestHandler):
     allow_reuse_address = True
 
     def handle(self):
-        patern_recive_data_and_store_level_message(self)
+        patern_receive_data_and_store_level_message(self)
 
 
 class MsgCriticalHandler(socketserver.BaseRequestHandler):
     allow_reuse_address = True
 
     def handle(self):
-        patern_recive_data_and_store_level_message(self)
+        patern_receive_data_and_store_level_message(self)
 
 
 cnt = 0
