@@ -29,22 +29,24 @@ void initialize(const BaseWriter &writer,
   }
 }
 
-const std::string &init_header_formatter() {
-  std::lock_guard<std::mutex> lock(sync_init_header_formatter);
-  static std::unordered_map<std::thread::id, std::unique_ptr<std::string>>
-      cached_patterns;
+const char *init_header_formatter() {
   auto thread_id = std::this_thread::get_id();
+  std::unique_lock<std::mutex> lock(sync_init_header_formatter);
+  static std::unordered_map<std::thread::id, std::unique_ptr<char[]>>
+      cached_patterns;
   if (auto &obj = cached_patterns[thread_id]) {
-    return *obj;
+    return &obj[0];
   } else {
     ThreadInfo thread_info;
-    char buf[custom_parameters->header_size];
-    std::snprintf(buf, sizeof(buf), custom_parameters->header_pattern,
+    cached_patterns[thread_id] = std::make_unique<char[]>(custom_parameters->header_size);
+    auto& buf = cached_patterns[thread_id];
+    //at this point we are ready only from cached_patterns perspective
+    lock.unlock();
+    std::snprintf(&buf[0], custom_parameters->header_size, custom_parameters->header_pattern,
                   thread_info.info.c_str(),
                   custom_parameters->align_filename_length,
                   custom_parameters->align_lines_length);
-    cached_patterns[thread_id] = std::make_unique<std::string>(&buf[0]);
-    return *cached_patterns[thread_id];
+    return &buf[0];
   }
 }
 
@@ -74,7 +76,7 @@ size_t get_time(char *output) {
 
 void __logme(const char *level, const char *file, const char *func, int line,
              const char *fmt, ...) {
-  const std::string &header_formatter{init_header_formatter()};
+  const char *header_formatter{init_header_formatter()};
   char message[custom_parameters->message_size];
   static size_t output_size{sizeof(message) + custom_parameters->header_size};
   // message
@@ -87,7 +89,7 @@ void __logme(const char *level, const char *file, const char *func, int line,
   auto current_time_size = get_time(output);
   auto size =
       std::snprintf(output + current_time_size, output_size - current_time_size,
-                    header_formatter.c_str(), level, file, line, func, message);
+                    header_formatter, level, file, line, func, message);
   //
   const std::lock_guard<std::mutex> lock(sync_write);
   custom_writer->write(output, size + current_time_size);

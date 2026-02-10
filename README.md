@@ -55,13 +55,13 @@ Hardware: 9800X3D, 96GB 6400, Goodram IRPRO 4TB
 |bench_hex_to_bytes           |long data set    |15.58 MB/s     |
 |bench_bytes_to_integral      |int32            |230.77 MB/s    |
 |bench_bytes_to_integral      |int64            |304.35 MB/s    |
-|thread_info                  |cache creation   |1098ms         |
-|bench_logging_bandwidth      |write one thread |109.14 MB/s    |
-|bench_logging_bandwidth      |write multithread|164.44 MB/s    |
+|thread_info                  |cache creation   |998ms          |
+|bench_logging_bandwidth      |write one thread |114.06 MB/s    |
+|bench_logging_bandwidth      |write multithread|188.18 MB/s    |
 |bench_logging_bandwidth_async|write one thread |68.04 MB/s     |
 |bench_logging_bandwidth_async|write multithread|58.46 MB/s     |
-|C bench logging              |single thread    |105.65 MB/s    |
-|C bench logging              |multithread      |255.19 MB/s    |
+|C bench logging              |single thread    |108.31 MB/s    |
+|C bench logging              |multithread      |273.89 MB/s    |
 
 ### Historical data:
 
