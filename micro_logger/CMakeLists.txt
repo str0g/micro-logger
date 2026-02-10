@@ -3,16 +3,14 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
 cmake_minimum_required(VERSION 3.21)
-project(micro_logger VERSION 0.3 LANGUAGES C)
-
-option(WITH_TESTS "Enable unit tests" ON)
+project(micro_logger VERSION 0.31 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_library(${PROJECT_NAME} SHARED src/micro_logger.cpp)
 target_compile_options(${PROJECT_NAME} PRIVATE -DUSE_C_VERSION=1)
-target_link_libraries(${PROJECT_NAME} micro_logger++)
+target_link_libraries(${PROJECT_NAME} PUBLIC micro_logger++)
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/micro_logger>
@@ -34,6 +32,6 @@ install(
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
-if(WITH_MICRO_LOGGER_DEMOS)
+if(MICRO_LOGGER_BUILD_DEMOS)
   custom_app_test_c(demo)
 endif()

@@ -1,4 +1,4 @@
-project(micro_logger++ VERSION 0.30 LANGUAGES CXX)
+project(micro_logger++ VERSION 0.31 LANGUAGES CXX)
 
 aux_source_directory(src SRC)
 add_library(${PROJECT_NAME} SHARED ${SRC})
@@ -7,14 +7,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include/micro_logger>
 )
 
-if(${WITH_MICRO_LOGGER_TESTS})
+if(MICRO_LOGGER_BUILD_TESTS)
   custom_gtest(test_hex)
   custom_gtest(test_to_string)
   custom_gtest(test_pattern)
   custom_gtest(test_custom_parameters)
 endif()
 
-if(${WITH_MICRO_LOGGER_DEMOS})
+if(MICRO_LOGGER_BUILD_DEMOS)
   custom_test_app(demo)
   custom_test_app(benchmark)
 endif()

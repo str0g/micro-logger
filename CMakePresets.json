@@ -24,9 +24,9 @@
       "inherits": "default",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "WITH_MICRO_LOGGER_DEMOS": "On",
-        "WITH_MICRO_LOGGER_TESTS": "On",
-        "WITH_SANITIZER": "On"
+        "MICRO_LOGGER_BUILD_DEMOS": "On",
+        "MICRO_LOGGER_BUILD_TESTS": "On",
+        "MICRO_LOGGER_SANITIZER": "On"
       }
     },
     {

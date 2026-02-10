@@ -2,30 +2,45 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
-cmake_minimum_required(VERSION 3.23)
-project(micro_logger_project VERSION 0.30 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.25)
+project(micro_logger_project VERSION 0.31 LANGUAGES CXX)
+
+# ------------------------------------------------------------
+# Detect top-level
+# ------------------------------------------------------------
+if (CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    set(MICRO_LOGGER_TOP_LEVEL ON)
+else()
+    set(MICRO_LOGGER_TOP_LEVEL OFF)
+endif()
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-option(WITH_MICRO_LOGGER_DEMOS "Enable demo applications" OFF)
-option(WITH_MICRO_LOGGER_TESTS "Enable unit tests" OFF)
-option(WITH_SANITIZER "Enable sanitizer" OFF)
+if (MICRO_LOGGER_TOP_LEVEL)
+  option(MICRO_LOGGER_DEMOS "Enable demo applications" OFF)
+  option(MICRO_LOGGER_BUILD_TESTS "Enable unit tests" OFF)
+  option(MICRO_LOGGER_SANITIZER "Enable sanitizer" OFF)
+else()
+  set(MICRO_LOGGER_BUILD_TESTS OFF)
+  set(MICRO_LOGGER_BUILD_DEMOS OFF)
+  set(MICRO_LOGGER_SANITIZER OFF)
+endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/micro_logger
     CACHE PATH "Location of header files" )
 
-if (${WITH_SANITIZER})
+  if (MICRO_LOGGER_SANITIZER)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 endif()
 
-if(${WITH_MICRO_LOGGER_DEMOS})
+if(MICRO_LOGGER_BUILD_DEMOS)
   include(cmake/other_tests.cmake)
 endif()
 
-if(${WITH_MICRO_LOGGER_TESTS})
+if(MICRO_LOGGER_BUILD_TESTS)
   include(cmake/gtest_wrapper.cmake)
   enable_testing()
 endif()
