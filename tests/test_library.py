@@ -17,8 +17,8 @@ class LibStdOutTesting(unittest.TestCase):
     def setUp(self):
         c_lib.micro_logger_get_stdout_writer.restype = ctypes.c_void_p
         writer = c_lib.micro_logger_get_stdout_writer()
-        c_lib.micro_logger_set_writer.argtypes = [c_void_p]
-        c_lib.micro_logger_set_writer(writer)
+        c_lib.micro_logger_initialize.argtypes = [c_void_p, c_void_p]
+        c_lib.micro_logger_initialize(writer, None)
 
         self.lvl_info = string_at(c_char_p.in_dll(c_lib, "LVL_INFO"))
         self.lvl_warn = string_at(c_char_p.in_dll(c_lib, "LVL_WARN"))
