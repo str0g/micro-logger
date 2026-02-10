@@ -15,7 +15,7 @@ const char *LVL_WARN = micro_logger::LVL_WARN;
 const char *LVL_ERROR = micro_logger::LVL_ERROR;
 const char *LVL_CRITICAL = micro_logger::LVL_CRITICAL;
 
-const char *current_file_name_only(const char *const file) {
+const char *micro_logger_basename(const char *const file) {
   return micro_logger::basename(file);
 }
 

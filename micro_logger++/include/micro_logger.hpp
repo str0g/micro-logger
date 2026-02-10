@@ -18,7 +18,7 @@ namespace micro_logger {
 constexpr micro_logger_CustomParameters default_parameters{
     .header_size = 128,
     .message_size = 1024,
-    .header_pattern ="[%%s]%s[%%%ss:%%%sd::%%s][%%s]\n",
+    .header_pattern = "[%%s]%s[%%%ss:%%%sd::%%s][%%s]\n",
     .align_filename_length = "",
     .align_lines_length = "03",
     .time_format = "[%D %T",
@@ -73,21 +73,22 @@ constexpr const char *LVL_WARN = "WARN ";
 constexpr const char *LVL_ERROR = "ERROR";
 constexpr const char *LVL_CRITICAL = "CRITI";
 
-#define __FILE_ONLY__ micro_logger::basename(__FILE__)
-
 } // namespace micro_logger
 
 #ifndef USE_C_VERSION
 
 #ifndef NODEBUG
 #define MSG_DEBUG(fmt, ...)                                                    \
-  micro_logger::__logme(micro_logger::LVL_DEBUG, __FILE_ONLY__, __FUNCTION__,  \
+  micro_logger::__logme(micro_logger::LVL_DEBUG,                               \
+                        micro_logger::basename(__FILE__), __FUNCTION__,        \
                         __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_ENTER()                                                            \
-  micro_logger::__logme(micro_logger::LVL_TRACE, __FILE_ONLY__, __FUNCTION__,  \
+  micro_logger::__logme(micro_logger::LVL_TRACE,                               \
+                        micro_logger::basename(__FILE__), __FUNCTION__,        \
                         __LINE__, "%s", "--ENTER--")
 #define MSG_EXIT()                                                             \
-  micro_logger::__logme(micro_logger::LVL_TRACE, __FILE_ONLY__, __FUNCTION__,  \
+  micro_logger::__logme(micro_logger::LVL_TRACE,                               \
+                        micro_logger::basename(__FILE__), __FUNCTION__,        \
                         __LINE__, "%s", "--EXIT--")
 #else
 #define MSG_DEBUG(fmt, ...)
@@ -96,17 +97,21 @@ constexpr const char *LVL_CRITICAL = "CRITI";
 #endif
 
 #define MSG_INFO(fmt, ...)                                                     \
-  micro_logger::__logme(micro_logger::LVL_INFO, __FILE_ONLY__, __FUNCTION__,   \
+  micro_logger::__logme(micro_logger::LVL_INFO,                                \
+                        micro_logger::basename(__FILE__), __FUNCTION__,        \
                         __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_WARN(fmt, ...)                                                     \
-  micro_logger::__logme(micro_logger::LVL_WARN, __FILE_ONLY__, __FUNCTION__,   \
+  micro_logger::__logme(micro_logger::LVL_WARN,                                \
+                        micro_logger::basename(__FILE__), __FUNCTION__,        \
                         __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_ERROR(fmt, ...)                                                    \
-  micro_logger::__logme(micro_logger::LVL_ERROR, __FILE_ONLY__, __FUNCTION__,  \
+  micro_logger::__logme(micro_logger::LVL_ERROR,                               \
+                        micro_logger::basename(__FILE__), __FUNCTION__,        \
                         __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_CRITICAL(fmt, ...)                                                 \
-  micro_logger::__logme(micro_logger::LVL_CRITICAL, __FILE_ONLY__,             \
-                        __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+  micro_logger::__logme(micro_logger::LVL_CRITICAL,                            \
+                        micro_logger::basename(__FILE__), __FUNCTION__,        \
+                        __LINE__, fmt, ##__VA_ARGS__)
 #endif // USE_C_VERSION
 
 #endif // MICRO_LOGGER_MICRO_LOGGER_HPP
