@@ -2,9 +2,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
+"""
+Utility functions for handling test file operations.
+
+This module provides functions for creating temporary files and parsing
+log files for testing purposes.
+"""
+
 import os
 import tempfile
 from time import sleep
+
 from .data_handler import DataHandler
 from .custom_popen import match_line_data
 
@@ -44,3 +52,4 @@ def create_temp_file(suffix=".txt"):
     fd, path = tempfile.mkstemp(suffix=suffix)
     os.close(fd)
     return path
+

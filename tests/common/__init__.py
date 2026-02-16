@@ -2,6 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
+"""
+Common utilities and helpers for micro_logger tests.
+
+This module serves as a package initializer for the tests.common package,
+providing access to shared utilities and helper functions used across
+the test suite.
+"""
+
 from .path_to_object import PathToObjects
 from .benchmark_value import BenchmarkValue, regex_benchmark_pattern
 from .data_handler import DataHandler, regex_line_pattern
@@ -38,4 +46,3 @@ __all__ = [
     "regex_benchmark_pattern",
     "regex_line_pattern",
 ]
-

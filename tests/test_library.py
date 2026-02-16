@@ -2,6 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
+"""
+Test suite for micro_logger C library via ctypes interface.
+
+This module provides tests for the C API of the micro_logger library,
+testing functionality through Python's ctypes bindings.
+"""
+
 #! /usr/bin/python3
 
 import ctypes
@@ -14,7 +21,20 @@ c_lib = ctypes.CDLL(paths.logger_library_location)
 
 
 class LibStdOutTesting(unittest.TestCase):
+    """
+    Test the C library logging functionality with stdout writer.
+
+    This test class verifies that the C API correctly logs messages
+    to stdout through Python's ctypes interface.
+    """
+
     def setUp(self):
+        """
+        Set up the test environment by initializing the C library.
+
+        Configures the ctypes bindings for the C library functions and
+        retrieves the logging levels as string pointers.
+        """
         c_lib.micro_logger_get_stdout_writer.restype = ctypes.c_void_p
         writer = c_lib.micro_logger_get_stdout_writer()
         c_lib.micro_logger_initialize.argtypes = [c_void_p, c_void_p]
@@ -26,6 +46,12 @@ class LibStdOutTesting(unittest.TestCase):
         self.lvl_critical = string_at(c_char_p.in_dll(c_lib, "LVL_CRITICAL"))
 
     def test_msg_send_something(self):
+        """
+        Test logging a message to stdout using the C library.
+
+        This test verifies that the C library correctly logs a formatted
+        message to stdout with appropriate level and context information.
+        """
         c_lib.micro_logger_logme(
             self.lvl_info,
             c_char_p(b"file"),
