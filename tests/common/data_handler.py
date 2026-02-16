@@ -2,6 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
+"""
+Data handler for parsing and storing log messages.
+
+This module provides a DataHandler class that parses log lines and stores
+various log metadata for testing and validation.
+"""
+
 import re
 
 regex_line_pattern = re.compile(
@@ -16,7 +23,16 @@ regex_line_pattern = re.compile(
 
 
 class DataHandler:
+    """
+    Handles parsing and storage of log message data.
+
+    This class parses log lines using regex and stores structured
+    metadata including timestamp, log level, process/thread ID, file
+    location, and message content.
+    """
+
     def __init__(self, match=None) -> None:
+        """Initialize with parsed match data or empty values."""
         self.data = None
         self.time = None
         self.level = None
@@ -39,6 +55,17 @@ class DataHandler:
             self.message = match["message"]
 
     def __eq__(self, right) -> bool:
+        """
+        Compare two DataHandler objects.
+
+        Compares level, file, line, function, and message.
+
+        Args:
+            right: Another DataHandler to compare against
+
+        Returns:
+            bool: True if all fields match, False otherwise
+        """
         if not isinstance(right, DataHandler):
             return NotImplemented
 
@@ -51,9 +78,16 @@ class DataHandler:
         )
 
     def __hash__(self) -> int:
+        """
+        Generate hash for DataHandler object.
+
+        Returns:
+            int: Hash based on level, file, line, function, and message
+        """
         return hash((self.level, self.file, self.line, self.function, self.message))
 
     def __str__(self) -> str:
+        """Return string representation of DataHandler."""
         return f"""data: {self.data}
 time: {self.time}
 level: {self.level}
@@ -65,9 +99,11 @@ function: {self.function}
 message: {self.message}"""
 
     def __repr__(self) -> str:
+        """Return concise string representation of DataHandler."""
         return f"""data: level: {self.level}
 pid: {self.pid}
 file: {self.file}
 line: {self.line}
 function: {self.function}
 message: {self.message}"""
+
