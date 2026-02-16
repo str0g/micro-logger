@@ -25,7 +25,7 @@ class DataHandler:
         self.file = None
         self.line = None
         self.function = None
-        self.message = None
+        self.message = ""
         self.options = [[], ""]
         if match:
             self.data = match["date"]
@@ -64,3 +64,10 @@ line: {self.line}
 function: {self.function}
 message: {self.message}"""
 
+    def __repr__(self) -> str:
+        return f"""data: level: {self.level}
+pid: {self.pid}
+file: {self.file}
+line: {self.line}
+function: {self.function}
+message: {self.message}"""

@@ -4,20 +4,23 @@
 
 #! /usr/bin/python3
 from common import (
-    PathToObjects,
     BenchmarkValue,
     DataHandler,
-    regex_line_pattern,
-    regex_benchmark_pattern,
-    get_envrion_variables,
+    NetworkServerRequestHandler,
+    PathToObjects,
+    ThreadedTCPServer,
     custom_popen,
     custom_popen_wrapper,
-    ThreadedTCPServer,
-    NetworkServerRequestHandler,
+    create_temp_file,
+    get_envrion_variables,
+    read_and_parse_file,
+    regex_benchmark_pattern,
+    regex_line_pattern,
 )
 import re
 import unittest
 import threading
+
 
 paths = PathToObjects()
 
@@ -29,8 +32,9 @@ class MsgHelloWorld(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "file": ["-o", "--msg_hello_world"],
+            "file": ["-f", "--msg_hello_world"],
             "network": ["-n", "--msg_hello_world"],
+            "stdout": ["-o", "--msg_hello_world"],
         }
         self.expected = DataHandler()
         self.expected.level = "DEBUG"
@@ -44,8 +48,9 @@ class MsgNull(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "file": ["-o", "--msg_null"],
+            "stdout": ["-o", "--msg_null"],
             "network": ["-n", "--msg_null"],
+            "file": ["-f", "--msg_null"],
         }
         self.expected = DataHandler()
         self.expected.level = "ERROR"
@@ -59,8 +64,9 @@ class MsgTraceEnter(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "file": ["-o", "--msg_trace"],
+            "stdout": ["-o", "--msg_trace"],
             "network": ["-n", "--msg_trace"],
+            "file": ["-f", "--msg_trace"],
         }
         self.expected = DataHandler()
         self.expected.level = "TRACE"
@@ -74,8 +80,9 @@ class MsgTraceExit(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "file": ["-o", "--msg_trace"],
+            "stdout": ["-o", "--msg_trace"],
             "network": ["-n", "--msg_trace"],
+            "file": ["-f", "--msg_trace"],
         }
         self.expected = DataHandler()
         self.expected.level = "TRACE"
@@ -89,8 +96,9 @@ class MsgCritical(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "file": ["-o", "--msg_critical"],
+            "stdout": ["-o", "--msg_critical"],
             "network": ["-n", "--msg_critical"],
+            "file": ["-f", "--msg_critical"],
         }
         self.expected = DataHandler()
         self.expected.level = "CRITI"
@@ -104,8 +112,10 @@ class MsgThreadsHelloWorld(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "file": ["-o", "--threads"],
+            "stdout": ["-o", "--threads"],
             "network": ["-n", "--threads"],
+            "file": ["-f", "--threads"],
+            "file": ["-f", "--threads"],
         }
         self.expected = DataHandler()
         self.expected.level = "INFO "
@@ -119,8 +129,9 @@ class MsgThreadsWorldHello(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "file": ["-o", "--threads"],
+            "stdout": ["-o", "--threads"],
             "network": ["-n", "--threads"],
+            "file": ["-f", "--threads"],
         }
         self.expected = DataHandler()
         self.expected.level = "WARN "
@@ -138,7 +149,7 @@ class CDemoStdOutTesting(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.maxDiff = None
         cls.binary = paths.demo_c
-        cls.option_string = "file"
+        cls.option_string = "stdout"
         cls.env = get_envrion_variables(cls.binary)
         cls.msg_regex = regex_line_pattern
 
@@ -150,6 +161,8 @@ class CDemoStdOutTesting(unittest.TestCase):
 
         out = []
         with custom_popen(cmd, self.env) as process:
+            if not process.stdout:
+                raise RuntimeError("missing stdout")
             data = process.stdout.read().decode("utf-8").split("\n")[:-1]
             for line in data:
                 match = regex.match(line)
@@ -296,6 +309,82 @@ class CDemoNetworkTesting(unittest.TestCase):
                     self.assertFalse(True)
 
                 self.assertEqual(out, expected)
+
+
+class CDemoFileTesting(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.maxDiff = None
+        cls.binary = paths.demo_c
+        cls.option_string = "file"
+        cls.env = get_envrion_variables(cls.binary)
+        cls.msg_regex = regex_line_pattern
+        cls.default_file = create_temp_file()
+
+        return super().setUpClass()
+
+    def test_msg_hello_world(self):
+        exp = MsgHelloWorld()
+        options = exp.options[self.option_string]
+        cmd = [self.binary, f"{options[0]}{self.default_file}", options[1]]
+        with custom_popen(cmd, self.env) as process:
+            exp.expected.pid = f"{process.pid:08d}"
+            out = read_and_parse_file(self.default_file, self.msg_regex)
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0], exp.expected)
+
+    def test_msg_null(self):
+        exp = MsgNull()
+        options = exp.options[self.option_string]
+        cmd = [self.binary, f"{options[0]}{self.default_file}", options[1]]
+        with custom_popen(cmd, self.env) as process:
+            exp.expected.pid = f"{process.pid:08d}"
+            out = read_and_parse_file(self.default_file, self.msg_regex)
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0], exp.expected)
+
+    def test_msg_trace(self):
+        exp_enter = MsgTraceEnter()
+        exp_exit = MsgTraceExit()
+        options = exp_enter.options[self.option_string]
+        cmd = [self.binary, f"{options[0]}{self.default_file}", options[1]]
+        with custom_popen(cmd, self.env) as process:
+            exp_enter.expected.pid = f"{process.pid:08d}"
+            exp_exit.expected.pid = f"{process.pid:08d}"
+            out = read_and_parse_file(self.default_file, self.msg_regex)
+        self.assertEqual(len(out), 2)
+        self.assertEqual(out[0], exp_enter.expected)
+        self.assertEqual(out[1], exp_exit.expected)
+
+    def test_msg_critical(self):
+        exp = MsgCritical()
+        options = exp.options[self.option_string]
+        cmd = [self.binary, f"{options[0]}{self.default_file}", options[1]]
+        with custom_popen(cmd, self.env) as process:
+            exp.expected.pid = f"{process.pid:08d}"
+            out = read_and_parse_file(self.default_file, self.msg_regex)
+        self.assertEqual(len(out), 1)
+        self.assertEqual(out[0], exp.expected)
+
+    def test_threads(self):
+        exp_hello = MsgThreadsHelloWorld()
+        exp_world = MsgThreadsWorldHello()
+        options = exp_hello.options[self.option_string]
+        cmd = [self.binary, f"{options[0]}{self.default_file}", options[1]]
+        with custom_popen(cmd, self.env) as process:
+            exp_hello.expected.pid = f"{process.pid:08d}"
+            exp_world.expected.pid = f"{process.pid:08d}"
+            out = read_and_parse_file(self.default_file, self.msg_regex)
+            self.assertEqual(len(out), 2)
+            for out_msg in out:
+                expected = None
+                if out_msg.level == "INFO ":
+                    exp_hello.expected.message += f"{out_msg.tid:016s}"
+                    expected = exp_hello.expected
+                else:
+                    exp_world.expected.message += f"{out_msg.tid:016s}"
+                    expected = exp_world.expected
+                self.assertEqual(out_msg, expected)
 
 
 if __name__ == "__main__":
