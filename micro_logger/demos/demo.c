@@ -106,7 +106,7 @@ static void benchmark() {
     long time_ms = elapsed_ms(start, end);
     size_t total_size = data_set_size * 907;
     fprintf(stdout,
-            "single thread took %ldms, size: %lu bandwidth: %.2f MB/s\n",
+            "singlethread took: %ldms, size: %lu, bandwidth: %.2f MB/s\n",
             time_ms, total_size, to_bandwidth_mb_s(total_size, time_ms));
   }
   {
@@ -123,7 +123,7 @@ static void benchmark() {
     timespec_get(&end, TIME_UTC);
     long time_ms = elapsed_ms(start, end);
     size_t total_size = data_set_size * 907 * (data_set_size * 10);
-    fprintf(stdout, "multithread took %ldms, size: %lu bandwidth: %.2f MB/s\n",
+    fprintf(stdout, "multithread took: %ldms, size: %lu, bandwidth: %.2f MB/s\n",
             time_ms, total_size, to_bandwidth_mb_s(total_size, time_ms));
   }
 }

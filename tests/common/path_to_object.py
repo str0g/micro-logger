@@ -2,9 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/
 
-import pathlib
 from subprocess import Popen, PIPE
-from inspect import currentframe, getouterframes
+import pathlib
 
 
 class PathToObjects:
@@ -27,7 +26,8 @@ class PathToObjects:
         self.logger_library_location = list(
             self.top_path.glob("**/{}.so".format(library_name))
         )[0]
-        self.test_main = list(self.top_path.glob("**/demo"))[0]
+        self.demo = list(self.top_path.glob("**/demo"))[0]
+        self.demo_c = list(self.top_path.glob("**/demo_c"))[0]
 
     def get_project_top_dir(self):
         p = Popen(["git", "rev-parse", "--show-toplevel"], stdout=PIPE)
@@ -40,10 +40,3 @@ class PathToObjects:
                 pass
         raise NotADirectoryError
 
-
-def get_linenumber():
-    return currentframe().f_back.f_lineno
-
-
-def get_function_name():
-    return getouterframes(currentframe())[1].function

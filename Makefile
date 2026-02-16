@@ -24,6 +24,7 @@ list_presets:
 
 test:
 	cmake --build build/debug/ && ctest --test-dir build/debug/ --output-on-failure
+	pytest tests/test_cdemo.py
 
 clean:
 	rm -rf ${BUILD_DIR}
