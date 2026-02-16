@@ -15,21 +15,27 @@ from .network_server import (
     ThreadedTCPServer,
     NetworkServerRequestHandler,
 )
+from .file_handler import (
+    create_temp_file,
+    read_and_parse_file,
+)
 from .utilities import get_linenumber, get_function_name
 
 __all__ = [
-    "PathToObjects",
     "BenchmarkValue",
-    "regex_benchmark_pattern",
     "DataHandler",
-    "regex_line_pattern",
+    "NetworkServerRequestHandler",
+    "PathToObjects",
+    "ThreadedTCPServer",
+    "create_temp_file",
     "custom_popen",
     "custom_popen_wrapper",
     "get_envrion_variables",
-    "match_line_data",
-    "ThreadedTCPServer",
-    "NetworkServerRequestHandler",
-    "get_linenumber",
     "get_function_name",
+    "get_linenumber",
+    "match_line_data",
+    "read_and_parse_file",
+    "regex_benchmark_pattern",
+    "regex_line_pattern",
 ]
 
