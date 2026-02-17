@@ -8,52 +8,95 @@
   - Caching optimization for thread information
   - Benchmarked performance up to ~273 MB/s logging bandwidth
 
-# How to build
-Preferable building method for testing and development
+# Key difference C vs C++
+ - C is lacking async writer support
+ - C filenames are being resolved on runtime
 
-### release build
+# How to build
+Preferable building method for testing, development, release
+
+## List build profiles
+```make list_presets```
+
+## Release
 ```make release```
 
-### debug build
+## Debug
 ```make debug```
 
-# How to test
-
-### Notes
-On some system adding ```LD_PRELOAD=$(gcc -print-file-name=libasan.so)``` might be required
-
-### Unit testing
-```make test```
-
-### Testing for performance changes
-```build/<profile>/demos/benchmark all```
-
-```LD_PRELOAD=$(gcc -print-file-name=libasan.so) build/<profile>/micro_logger/demos/demo_c --benchmark```
-
-### Integration testing with python 
-Caching issues with formatting or library
-
-```LD_PRELOAD=$(gcc -print-file-name=libasan.so) python test_library.py```
-
-# Build package for your distribution
-Currently only archlinux is supported
+## Package for your distribution
+Currently only ArchLinux is supported
 
 ```make pkg```
 
-# How to develope
-@TODO
+# How to test
+## all at once
+```make test```
+
+## unit tests
+```cmake --build build/debug/ && ctest --test-dir build/debug/ --output-on-failure```
+
+## Integration (testing with python)
+```pytest tests/test_library.py```
+```pytest tests/test_c_demo.py```
+
+## Performance
+C++ implementation
+```build/<profile>/demos/benchmark all```
+
+C wrapper over C++ implementation
+```LD_PRELOAD=$(gcc -print-file-name=libasan.so) build/<profile>/micro_logger/demos/demo_c --benchmark```
+
+
+# How to develop
+## First thing to do
+ - Before any changes execute regression tests.
+## Choose scope of work
+ - bug fix
+ - improvement
+ - feature
+## Definition of done
+ - No regression has been introduced
+ - New functionality has been cover by unit/integration tests
+ - Documentation has been updated
+
 
 # How to use
-CPP demo
-
+## Demonstration
+Follow demonstration implementation for C++
+located in
+```micro_logger++/demos/demo.cpp```
+related binary
 ```LD_PRELOAD=$(gcc -print-file-name=libasan.so) build/<profile>/demos/demo help```
 
-C demo
-
+Follow demonstration implementation for C
+located in
+```micro_logger/demos/demo.c```
+related binary
 ```LD_PRELOAD=$(gcc -print-file-name=libasan.so) build/<profile>/micro_logger/demos/demo_c --help```
+
+## Integrate to project
+### C++ API
+- micro_logger.hpp - Contains logging functionality
+- micro_logger_writer.hpp - Contains writer implementations
+- micro_logger_tools.hpp - Utility functions
+- micro_logger_custom_paramters.h - Custom parameters
+### C++ library
+- micro_logger++.so
+
+### C API
+- micro_logger.h - Contains logging functionality
+- micro_logger_custom_paramters.h - Custom parameters
+### C library
+- micro_logger++.so (mandatory dependency for C implementation)
+- micro_logger.so
+
+## Troubleshooting
+On some system compiling with MICRO_LOGGER_SANITIZER requires adding to environment variables ```LD_PRELOAD=$(gcc -print-file-name=libasan.so)```
 
 # Performance changes:
 Hardware: 9800X3D, 96GB 6400, Goodram IRPRO 4TB
+Build info: debug profile
 
 ### Current performance:
 
