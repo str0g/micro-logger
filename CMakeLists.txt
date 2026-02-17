@@ -21,7 +21,7 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 if(MICRO_LOGGER_TOP_LEVEL)
-  option(MICRO_LOGGER_DEMOS "Enable demo applications" OFF)
+  option(MICRO_LOGGER_BUILD_DEMOS "Enable demo applications" OFF)
   option(MICRO_LOGGER_BUILD_TESTS "Enable unit tests" OFF)
   option(MICRO_LOGGER_SANITIZER "Enable sanitizer" OFF)
 else()
