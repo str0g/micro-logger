@@ -31,7 +31,7 @@ static void usage(const char *prog) {
           "      --msg_null         Prints message with NULL value\n"
           "      --msg_trace        Prints enter/exit traces\n"
           "      --msg_critical     Prints message on critical level\n"
-          "      --threads          Prints message from 2 threads\n"
+          "      --msg_threads      Prints message from 2 threads\n"
           "      --benchmark        Run build in benchmark\n",
           prog, default_address, default_port, default_file);
 }
@@ -46,7 +46,7 @@ static int worker_warn(void *arg) {
   return 0;
 }
 
-static void threads() {
+static void msg_threads() {
   thrd_t t1, t2;
   thrd_create(&t1, worker_info, "hello");
   thrd_create(&t2, worker_warn, "world");
@@ -134,7 +134,7 @@ enum Scenerios {
   MSG_NULL = 0x02,
   MSG_TRACE = 0x04,
   MSG_CRITICAL_ = 0x08,
-  THREADS = 0x10,
+  MSG_THREADS = 0x10,
   BENCHMARK = 0x20
 };
 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
       {"msg_null", no_argument, NULL, MSG_NULL},
       {"msg_trace", no_argument, NULL, MSG_TRACE},
       {"msg_critical", no_argument, NULL, MSG_CRITICAL_},
-      {"threads", no_argument, NULL, THREADS},
+      {"msg_threads", no_argument, NULL, MSG_THREADS},
       {"benchmark", no_argument, NULL, BENCHMARK},
       {NULL, 0, NULL, 0}};
 
@@ -206,8 +206,8 @@ int main(int argc, char *argv[]) {
     case MSG_CRITICAL_:
       MSG_CRITICAL("%s %d %s", "run out of chocolate for", 1, "time!");
       break;
-    case THREADS:
-      threads();
+    case MSG_THREADS:
+      msg_threads();
       break;
     case BENCHMARK:
       benchmark();

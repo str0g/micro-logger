@@ -112,10 +112,9 @@ class MsgThreadsHelloWorld(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "stdout": ["-o", "--threads"],
-            "network": ["-n", "--threads"],
-            "file": ["-f", "--threads"],
-            "file": ["-f", "--threads"],
+            "stdout": ["-o", "--msg_threads"],
+            "network": ["-n", "--msg_threads"],
+            "file": ["-f", "--msg_threads"],
         }
         self.expected = DataHandler()
         self.expected.level = "INFO "
@@ -129,9 +128,9 @@ class MsgThreadsWorldHello(DataHandler):
     def __init__(self, match=None) -> None:
         super().__init__(match)
         self.options = {
-            "stdout": ["-o", "--threads"],
-            "network": ["-n", "--threads"],
-            "file": ["-f", "--threads"],
+            "stdout": ["-o", "--msg_threads"],
+            "network": ["-n", "--msg_threads"],
+            "file": ["-f", "--msg_threads"],
         }
         self.expected = DataHandler()
         self.expected.level = "WARN "
