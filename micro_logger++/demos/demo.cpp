@@ -54,7 +54,7 @@ void msg_critical() {
   MSG_CRITICAL("%s %d %s", "run out of chocolate for", 1, "time!");
 }
 
-void threads() {
+void msg_threads() {
   std::thread th1([&]() {
     auto tid = std::this_thread::get_id();
     MSG_INFO("hello %llu", tid);
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
       {"--msg_null", msg_null},
       {"--msg_trace", msg_trace},
       {"--msg_critical", msg_critical},
-      {"--threads", threads},
+      {"--msg_threads", msg_threads},
       {"--singleton", singleton},
       {"--net", set_network_writer},
       {"--file", set_file_writer},
