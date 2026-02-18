@@ -34,6 +34,7 @@ static void usage(const char *prog) {
           "      --msg_trace        Prints enter/exit traces\n"
           "      --msg_critical     Prints message on critical level\n"
           "      --msg_threads      Prints message from 2 threads\n"
+          "      --msg_all          Prints all message types\n"
           "      --benchmark        Run build in benchmark\n",
           prog, default_address, default_port, default_file);
 }
@@ -62,6 +63,19 @@ static void msg_threads() {
 
   thrd_join(t1, NULL);
   thrd_join(t2, NULL);
+}
+
+static void msg_hello_world() { MSG_DEBUG("hello world"); }
+
+static void msg_null() { MSG_ERROR("%s", NULL); }
+
+static void msg_trace() {
+  MSG_ENTER();
+  MSG_EXIT();
+}
+
+static void msg_critical() {
+  MSG_CRITICAL("%s %d %s", "run out of chocolate for", 1, "time!");
 }
 
 static size_t to_kilobytes(size_t bytes) { return bytes / (1024); }
@@ -138,14 +152,15 @@ static void benchmark() {
   }
 }
 
-enum Scenerios {
-  DO_NOTHING = 0x0,
-  MSG_HELLO_WORLD = 0x01,
-  MSG_NULL = 0x02,
-  MSG_TRACE = 0x04,
-  MSG_CRITICAL_ = 0x08,
-  MSG_THREADS = 0x10,
-  BENCHMARK = 0x20
+enum Scenarios {
+  DO_NOTHING_OPT = 0x0,
+  MSG_HELLO_WORLD_OPT = 0x01,
+  MSG_NULL_OPT = 0x02,
+  MSG_TRACE_OPT = 0x04,
+  MSG_CRITICAL_OPT = 0x08,
+  MSG_THREADS_OPT = 0x10,
+  MSG_ALL_OPT = 0x40,
+  BENCHMARK_OPT = 0x20
 };
 
 int main(int argc, char *argv[]) {
@@ -159,12 +174,13 @@ int main(int argc, char *argv[]) {
       {"stdo", no_argument, NULL, 'o'},
       {"silent", no_argument, NULL, 's'},
       {"crash", no_argument, NULL, 'c'},
-      {"msg_hello_world", no_argument, NULL, MSG_HELLO_WORLD},
-      {"msg_null", no_argument, NULL, MSG_NULL},
-      {"msg_trace", no_argument, NULL, MSG_TRACE},
-      {"msg_critical", no_argument, NULL, MSG_CRITICAL_},
-      {"msg_threads", no_argument, NULL, MSG_THREADS},
-      {"benchmark", no_argument, NULL, BENCHMARK},
+      {"msg_hello_world", no_argument, NULL, MSG_HELLO_WORLD_OPT},
+      {"msg_null", no_argument, NULL, MSG_NULL_OPT},
+      {"msg_trace", no_argument, NULL, MSG_TRACE_OPT},
+      {"msg_critical", no_argument, NULL, MSG_CRITICAL_OPT},
+      {"msg_threads", no_argument, NULL, MSG_THREADS_OPT},
+      {"msg_all", no_argument, NULL, MSG_ALL_OPT},
+      {"benchmark", no_argument, NULL, BENCHMARK_OPT},
       {NULL, 0, NULL, 0}};
 
   const char *short_opts = "hn::f::os";
@@ -210,28 +226,35 @@ int main(int argc, char *argv[]) {
       break;
     case 'c':
       MSG_ERROR("expected to crash");
-    case MSG_HELLO_WORLD:
+    case MSG_HELLO_WORLD_OPT:
       exit_if_worker_not_set(argv[0]);
-      MSG_DEBUG("hello world");
+      msg_hello_world();
       break;
-    case MSG_NULL:
+    case MSG_NULL_OPT:
       exit_if_worker_not_set(argv[0]);
-      MSG_ERROR("%s", NULL);
+      msg_null();
       break;
-    case MSG_TRACE:
+    case MSG_TRACE_OPT:
       exit_if_worker_not_set(argv[0]);
-      MSG_ENTER();
-      MSG_EXIT();
+      msg_trace();
       break;
-    case MSG_CRITICAL_:
+    case MSG_CRITICAL_OPT:
       exit_if_worker_not_set(argv[0]);
-      MSG_CRITICAL("%s %d %s", "run out of chocolate for", 1, "time!");
+      msg_critical();
       break;
-    case MSG_THREADS:
+    case MSG_THREADS_OPT:
       exit_if_worker_not_set(argv[0]);
       msg_threads();
       break;
-    case BENCHMARK:
+    case MSG_ALL_OPT:
+      exit_if_worker_not_set(argv[0]);
+      msg_hello_world();
+      msg_null();
+      msg_trace();
+      msg_critical();
+      msg_threads();
+      break;
+    case BENCHMARK_OPT:
       benchmark();
       return 0;
     case '?':

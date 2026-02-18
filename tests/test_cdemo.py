@@ -39,8 +39,8 @@ class MsgHelloWorld(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "DEBUG"
         self.expected.file = "demo.c"
-        self.expected.line = "215"
-        self.expected.function = "main"
+        self.expected.line = "068"
+        self.expected.function = "msg_hello_world"
         self.expected.message = "hello world"
 
 
@@ -55,8 +55,8 @@ class MsgNull(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "ERROR"
         self.expected.file = "demo.c"
-        self.expected.line = "219"
-        self.expected.function = "main"
+        self.expected.line = "070"
+        self.expected.function = "msg_null"
         self.expected.message = "(null)"
 
 
@@ -71,8 +71,8 @@ class MsgTraceEnter(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "TRACE"
         self.expected.file = "demo.c"
-        self.expected.line = "223"
-        self.expected.function = "main"
+        self.expected.line = "073"
+        self.expected.function = "msg_trace"
         self.expected.message = "--ENTER--"
 
 
@@ -87,8 +87,8 @@ class MsgTraceExit(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "TRACE"
         self.expected.file = "demo.c"
-        self.expected.line = "224"
-        self.expected.function = "main"
+        self.expected.line = "074"
+        self.expected.function = "msg_trace"
         self.expected.message = "--EXIT--"
 
 
@@ -103,8 +103,8 @@ class MsgCritical(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "CRITI"
         self.expected.file = "demo.c"
-        self.expected.line = "228"
-        self.expected.function = "main"
+        self.expected.line = "078"
+        self.expected.function = "msg_critical"
         self.expected.message = "run out of chocolate for 1 time!"
 
 
@@ -119,7 +119,7 @@ class MsgThreadsHelloWorld(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "INFO "
         self.expected.file = "demo.c"
-        self.expected.line = "049"
+        self.expected.line = "050"
         self.expected.function = "worker_info"
         self.expected.message = "hello "
 
@@ -135,7 +135,7 @@ class MsgThreadsWorldHello(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "WARN "
         self.expected.file = "demo.c"
-        self.expected.line = "054"
+        self.expected.line = "055"
         self.expected.function = "worker_warn"
         self.expected.message = "world "
 
