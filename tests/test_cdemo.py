@@ -39,7 +39,7 @@ class MsgHelloWorld(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "DEBUG"
         self.expected.file = "demo.c"
-        self.expected.line = "197"
+        self.expected.line = "215"
         self.expected.function = "main"
         self.expected.message = "hello world"
 
@@ -55,7 +55,7 @@ class MsgNull(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "ERROR"
         self.expected.file = "demo.c"
-        self.expected.line = "200"
+        self.expected.line = "219"
         self.expected.function = "main"
         self.expected.message = "(null)"
 
@@ -71,7 +71,7 @@ class MsgTraceEnter(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "TRACE"
         self.expected.file = "demo.c"
-        self.expected.line = "203"
+        self.expected.line = "223"
         self.expected.function = "main"
         self.expected.message = "--ENTER--"
 
@@ -87,7 +87,7 @@ class MsgTraceExit(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "TRACE"
         self.expected.file = "demo.c"
-        self.expected.line = "204"
+        self.expected.line = "224"
         self.expected.function = "main"
         self.expected.message = "--EXIT--"
 
@@ -103,7 +103,7 @@ class MsgCritical(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "CRITI"
         self.expected.file = "demo.c"
-        self.expected.line = "207"
+        self.expected.line = "228"
         self.expected.function = "main"
         self.expected.message = "run out of chocolate for 1 time!"
 
@@ -119,7 +119,7 @@ class MsgThreadsHelloWorld(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "INFO "
         self.expected.file = "demo.c"
-        self.expected.line = "040"
+        self.expected.line = "049"
         self.expected.function = "worker_info"
         self.expected.message = "hello "
 
@@ -135,15 +135,41 @@ class MsgThreadsWorldHello(DataHandler):
         self.expected = DataHandler()
         self.expected.level = "WARN "
         self.expected.file = "demo.c"
-        self.expected.line = "045"
+        self.expected.line = "054"
         self.expected.function = "worker_warn"
         self.expected.message = "world "
 
 
-class CDemoStdOutTesting(unittest.TestCase):
-    def setUp(self) -> None:
-        super().setUp()
+class IncorrectInvocation(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.maxDiff = None
+        cls.binary = paths.demo_c
+        cls.env = get_envrion_variables(cls.binary)
 
+        return super().setUpClass()
+
+    def test_crash(self):
+        cmd = [self.binary, "--crash"]
+        with custom_popen(cmd, self.env) as process:
+            self.assertTrue(
+                "AddressSanitizer:DEADLYSIGNAL" in process.stderr.read().decode("utf-8")
+            )
+
+    def test_redirect_to_help(self):
+        for option in [
+            "--msg_hello_world",
+            "--msg_null",
+            "--msg_trace",
+            "--msg_critical",
+            "--msg_threads",
+        ]:
+            cmd = [self.binary, option]
+            with custom_popen(cmd, self.env) as process:
+                self.assertTrue("Usage:" in process.stderr.read().decode("utf-8"))
+
+
+class CDemoStdOutTesting(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.maxDiff = None
@@ -224,9 +250,6 @@ class CDemoStdOutTesting(unittest.TestCase):
 
 
 class CDemoNetworkTesting(unittest.TestCase):
-    def setUp(self) -> None:
-        super().setUp()
-
     @classmethod
     def setUpClass(cls) -> None:
         cls.maxDiff = None

@@ -17,6 +17,7 @@
 const char *default_address = "127.0.0.1";
 int default_port = 6024;
 const char *default_file = "log.txt";
+int writer_not_set = 1;
 
 static void usage(const char *prog) {
   fprintf(stderr,
@@ -27,6 +28,7 @@ static void usage(const char *prog) {
           "  -f, --file             Writer to file, default: %s\n"
           "  -o, --stdo             Writer standard out\n"
           "  -s, --silent           Writer output is turned off\n"
+          "  -c, --crash            Try to log with out writer\n"
           "      --msg_hello_world  Prints \"hello world\"\n"
           "      --msg_null         Prints message with NULL value\n"
           "      --msg_trace        Prints enter/exit traces\n"
@@ -34,6 +36,13 @@ static void usage(const char *prog) {
           "      --msg_threads      Prints message from 2 threads\n"
           "      --benchmark        Run build in benchmark\n",
           prog, default_address, default_port, default_file);
+}
+
+static void exit_if_worker_not_set(const char *prog) {
+  if (writer_not_set) {
+    usage(prog);
+    exit(2);
+  }
 }
 
 static int worker_info(void *arg) {
@@ -123,7 +132,8 @@ static void benchmark() {
     timespec_get(&end, TIME_UTC);
     long time_ms = elapsed_ms(start, end);
     size_t total_size = data_set_size * 907 * (data_set_size * 10);
-    fprintf(stdout, "multithread took: %ldms, size: %lu, bandwidth: %.2f MB/s\n",
+    fprintf(stdout,
+            "multithread took: %ldms, size: %lu, bandwidth: %.2f MB/s\n",
             time_ms, total_size, to_bandwidth_mb_s(total_size, time_ms));
   }
 }
@@ -148,6 +158,7 @@ int main(int argc, char *argv[]) {
       {"file", optional_argument, NULL, 'f'},
       {"stdo", no_argument, NULL, 'o'},
       {"silent", no_argument, NULL, 's'},
+      {"crash", no_argument, NULL, 'c'},
       {"msg_hello_world", no_argument, NULL, MSG_HELLO_WORLD},
       {"msg_null", no_argument, NULL, MSG_NULL},
       {"msg_trace", no_argument, NULL, MSG_TRACE},
@@ -180,33 +191,44 @@ int main(int argc, char *argv[]) {
       }
       micro_logger_initialize(
           micro_logger_get_net_writer(default_address, default_port), NULL);
+      writer_not_set = 0;
       break;
     case 'f':
       if (optarg) {
         default_file = optarg;
       }
       micro_logger_initialize(micro_logger_get_file_writer(default_file), NULL);
+      writer_not_set = 0;
       break;
     case 'o':
       micro_logger_initialize(micro_logger_get_stdout_writer(), NULL);
+      writer_not_set = 0;
       break;
     case 's':
       micro_logger_initialize(micro_logger_get_silent_writer(), NULL);
+      writer_not_set = 0;
       break;
+    case 'c':
+      MSG_ERROR("expected to crash");
     case MSG_HELLO_WORLD:
+      exit_if_worker_not_set(argv[0]);
       MSG_DEBUG("hello world");
       break;
     case MSG_NULL:
+      exit_if_worker_not_set(argv[0]);
       MSG_ERROR("%s", NULL);
       break;
     case MSG_TRACE:
+      exit_if_worker_not_set(argv[0]);
       MSG_ENTER();
       MSG_EXIT();
       break;
     case MSG_CRITICAL_:
+      exit_if_worker_not_set(argv[0]);
       MSG_CRITICAL("%s %d %s", "run out of chocolate for", 1, "time!");
       break;
     case MSG_THREADS:
+      exit_if_worker_not_set(argv[0]);
       msg_threads();
       break;
     case BENCHMARK:
