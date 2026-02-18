@@ -103,7 +103,7 @@ static void usage(const char *prog) {
           "      --msg_critical     Prints message on critical level\n"
           "      --msg_threads      Prints message from 2 threads\n"
           "      --msg_all          Prints all message types\n"
-          "      --msg_singleton     Demonstrates singleton pattern\n",
+          "      --msg_singleton    Prints message from singleton pattern\n",
           prog, g_address.c_str(), g_port, g_file);
 }
 
@@ -209,6 +209,7 @@ int main(int argc, char **argv) {
       msg_trace();
       msg_critical();
       msg_threads();
+      singleton();
       break;
     case SINGLETON_OPT:
       exit_if_writer_not_set(argv[0]);
