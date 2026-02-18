@@ -1,6 +1,6 @@
 project(
   micro_logger++
-  VERSION 0.31
+  VERSION 0.40
   LANGUAGES CXX)
 
 aux_source_directory(src SRC)

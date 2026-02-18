@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(
   micro_logger
-  VERSION 0.31
+  VERSION 0.40
   LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
