@@ -4,7 +4,6 @@
 
 #! /usr/bin/python3
 from common import (
-    BenchmarkValue,
     DataHandler,
     NetworkServerRequestHandler,
     PathToObjects,
@@ -12,13 +11,10 @@ from common import (
     custom_popen,
     custom_popen_wrapper,
     create_temp_file,
-    get_cpu_name,
     get_envrion_variables,
     read_and_parse_file,
-    regex_benchmark_pattern,
     regex_line_pattern,
 )
-import re
 import unittest
 import threading
 
@@ -39,8 +35,8 @@ class MsgHelloWorld(DataHandler):
         }
         self.expected = DataHandler()
         self.expected.level = "DEBUG"
-        self.expected.file = "demo.c"
-        self.expected.line = "068"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "056"
         self.expected.function = "msg_hello_world"
         self.expected.message = "hello world"
 
@@ -55,8 +51,8 @@ class MsgNull(DataHandler):
         }
         self.expected = DataHandler()
         self.expected.level = "ERROR"
-        self.expected.file = "demo.c"
-        self.expected.line = "070"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "058"
         self.expected.function = "msg_null"
         self.expected.message = "(null)"
 
@@ -71,8 +67,8 @@ class MsgTraceEnter(DataHandler):
         }
         self.expected = DataHandler()
         self.expected.level = "TRACE"
-        self.expected.file = "demo.c"
-        self.expected.line = "073"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "061"
         self.expected.function = "msg_trace"
         self.expected.message = "--ENTER--"
 
@@ -87,8 +83,8 @@ class MsgTraceExit(DataHandler):
         }
         self.expected = DataHandler()
         self.expected.level = "TRACE"
-        self.expected.file = "demo.c"
-        self.expected.line = "074"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "062"
         self.expected.function = "msg_trace"
         self.expected.message = "--EXIT--"
 
@@ -103,8 +99,8 @@ class MsgCritical(DataHandler):
         }
         self.expected = DataHandler()
         self.expected.level = "CRITI"
-        self.expected.file = "demo.c"
-        self.expected.line = "078"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "066"
         self.expected.function = "msg_critical"
         self.expected.message = "run out of chocolate for 1 time!"
 
@@ -119,9 +115,9 @@ class MsgThreadsHelloWorld(DataHandler):
         }
         self.expected = DataHandler()
         self.expected.level = "INFO "
-        self.expected.file = "demo.c"
-        self.expected.line = "050"
-        self.expected.function = "worker_info"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "049"
+        self.expected.function = "operator()"
         self.expected.message = "hello "
 
 
@@ -135,17 +131,49 @@ class MsgThreadsWorldHello(DataHandler):
         }
         self.expected = DataHandler()
         self.expected.level = "WARN "
-        self.expected.file = "demo.c"
-        self.expected.line = "055"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "044"
         self.expected.function = "worker_warn"
         self.expected.message = "world "
+
+
+class MsgSingletonEnter(DataHandler):
+    def __init__(self, match=None) -> None:
+        super().__init__(match)
+        self.options = {
+            "stdout": ["-o", "--msg_singleton"],
+            "network": ["-n", "--msg_singleton"],
+            "file": ["-f", "--msg_singleton"],
+        }
+        self.expected = DataHandler()
+        self.expected.level = "TRACE"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "076"
+        self.expected.function = "~SampleSingletonClass"
+        self.expected.message = "--ENTER--"
+
+
+class MsgSingletonExit(DataHandler):
+    def __init__(self, match=None) -> None:
+        super().__init__(match)
+        self.options = {
+            "stdout": ["-o", "--msg_singleton"],
+            "network": ["-n", "--msg_singleton"],
+            "file": ["-f", "--msg_singleton"],
+        }
+        self.expected = DataHandler()
+        self.expected.level = "TRACE"
+        self.expected.file = "demo.cpp"
+        self.expected.line = "077"
+        self.expected.function = "~SampleSingletonClass"
+        self.expected.message = "--EXIT--"
 
 
 class IncorrectInvocation(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.maxDiff = None
-        cls.binary = paths.demo_c
+        cls.binary = paths.demo_cpp
         cls.env = get_envrion_variables(cls.binary)
 
         return super().setUpClass()
@@ -164,45 +192,23 @@ class IncorrectInvocation(unittest.TestCase):
             "--msg_trace",
             "--msg_critical",
             "--msg_threads",
+            "--msg_singleton",
         ]:
             cmd = [self.binary, option]
             with custom_popen(cmd, self.env) as process:
                 self.assertTrue("Usage:" in process.stderr.read().decode("utf-8"))
 
 
-class CDemoStdOutTesting(unittest.TestCase):
+class CppDemoStdOutTesting(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.maxDiff = None
-        cls.binary = paths.demo_c
+        cls.binary = paths.demo_cpp
         cls.option_string = "stdout"
         cls.env = get_envrion_variables(cls.binary)
         cls.msg_regex = regex_line_pattern
 
         return super().setUpClass()
-
-    @unittest.skipIf("AMD Ryzen 7 9800X3D" not in get_cpu_name(), "Results are going to be off")
-    def test_benchmark(self):
-        cmd = [self.binary, "--benchmark"]
-        regex = re.compile(regex_benchmark_pattern, re.VERBOSE)
-
-        out = []
-        with custom_popen(cmd, self.env) as process:
-            if not process.stdout:
-                raise RuntimeError("missing stdout")
-            data = process.stdout.read().decode("utf-8").split("\n")[:-1]
-            for line in data:
-                match = regex.match(line)
-                if not match:
-                    raise ValueError("patter not matched")
-                out.append(BenchmarkValue(match))
-
-        exp = [
-            BenchmarkValue({"time": 402, "size": 45350000, "bandwidth": 108.31}),
-            BenchmarkValue({"time": 305, "size": 90700000, "bandwidth": 273.89}),
-        ]
-        for index, obj in enumerate(exp):
-            self.assertEqual(out[index], obj)
 
     def test_msg_hello_world(self):
         exp = MsgHelloWorld()
@@ -250,12 +256,21 @@ class CDemoStdOutTesting(unittest.TestCase):
                 expected = exp_world.expected
             self.assertEqual(out, expected)
 
+    def test_msg_singleton(self):
+        exp_enter = MsgSingletonEnter()
+        exp_exit = MsgSingletonExit()
+        cmd = [self.binary, *exp_enter.options[self.option_string]]
+        out = custom_popen_wrapper(cmd, self.env, self.msg_regex, exp_enter)
+        self.assertEqual(len(out), 2)
+        self.assertEqual(out[0], exp_enter.expected)
+        self.assertEqual(out[1], exp_exit.expected)
 
-class CDemoNetworkTesting(unittest.TestCase):
+
+class CppDemoNetworkTesting(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.maxDiff = None
-        cls.binary = paths.demo_c
+        cls.binary = paths.demo_cpp
         cls.option_string = "network"
         cls.env = get_envrion_variables(cls.binary)
         cls.msg_regex = regex_line_pattern
@@ -296,9 +311,6 @@ class CDemoNetworkTesting(unittest.TestCase):
         cmd = [self.binary, *exp_enter.options[self.option_string]]
         process = custom_popen(cmd, self.env)
         out = NetworkServerRequestHandler.get_output(self.msg_regex)
-        print("->>")
-        print(out)
-        print("-<<")
         self.assertEqual(len(out), 2)
         self.assertEqual(out[0], exp_enter.expected)
         self.assertEqual(out[1], exp_exit.expected)
@@ -334,12 +346,22 @@ class CDemoNetworkTesting(unittest.TestCase):
 
                 self.assertEqual(out, expected)
 
+    def test_msg_singleton(self):
+        exp_enter = MsgSingletonEnter()
+        exp_exit = MsgSingletonExit()
+        cmd = [self.binary, *exp_enter.options[self.option_string]]
+        process = custom_popen(cmd, self.env)
+        out = NetworkServerRequestHandler.get_output(self.msg_regex)
+        self.assertEqual(len(out), 2)
+        self.assertEqual(out[0], exp_enter.expected)
+        self.assertEqual(out[1], exp_exit.expected)
 
-class CDemoFileTesting(unittest.TestCase):
+
+class CppDemoFileTesting(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.maxDiff = None
-        cls.binary = paths.demo_c
+        cls.binary = paths.demo_cpp
         cls.option_string = "file"
         cls.env = get_envrion_variables(cls.binary)
         cls.msg_regex = regex_line_pattern
@@ -409,6 +431,19 @@ class CDemoFileTesting(unittest.TestCase):
                     exp_world.expected.message += f"{out_msg.tid:016s}"
                     expected = exp_world.expected
                 self.assertEqual(out_msg, expected)
+
+    def test_msg_singleton(self):
+        exp_enter = MsgSingletonEnter()
+        exp_exit = MsgSingletonExit()
+        options = exp_enter.options[self.option_string]
+        cmd = [self.binary, f"{options[0]}{self.default_file}", options[1]]
+        with custom_popen(cmd, self.env) as process:
+            exp_enter.expected.pid = f"{process.pid:08d}"
+            exp_exit.expected.pid = f"{process.pid:08d}"
+            out = read_and_parse_file(self.default_file, self.msg_regex)
+        self.assertEqual(len(out), 2)
+        self.assertEqual(out[0], exp_enter.expected)
+        self.assertEqual(out[1], exp_exit.expected)
 
 
 if __name__ == "__main__":

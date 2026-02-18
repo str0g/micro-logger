@@ -26,6 +26,7 @@ test:
 	cmake --build build/debug/ && ctest --test-dir build/debug/ --output-on-failure
 	pytest tests/test_library.py
 	pytest tests/test_cdemo.py
+	pytest tests/test_cppdemo.py
 
 clean:
 	rm -rf ${BUILD_DIR}

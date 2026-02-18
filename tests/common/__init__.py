@@ -27,7 +27,7 @@ from .file_handler import (
     create_temp_file,
     read_and_parse_file,
 )
-from .utilities import get_linenumber, get_function_name
+from .utilities import get_cpu_name, get_linenumber, get_function_name
 
 __all__ = [
     "BenchmarkValue",
@@ -38,6 +38,7 @@ __all__ = [
     "create_temp_file",
     "custom_popen",
     "custom_popen_wrapper",
+    "get_cpu_name",
     "get_envrion_variables",
     "get_function_name",
     "get_linenumber",

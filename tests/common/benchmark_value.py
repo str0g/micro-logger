@@ -34,6 +34,9 @@ class BenchmarkValue:
         """Return string representation of benchmark values."""
         return f"time: {self.time}\nsize: {self.size}\nbandwidth: {self.bandwidth}"
 
+    def __repr__(self):
+        return self.__str__()
+
     def __eq__(self, right) -> bool:
         """
         Compare two BenchmarkValue objects.

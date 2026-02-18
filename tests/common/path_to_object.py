@@ -41,7 +41,7 @@ class PathToObjects:
         self.logger_library_location = list(
             self.top_path.glob("**/{}.so".format(library_name))
         )[0]
-        self.demo = list(self.top_path.glob("**/demo"))[0]
+        self.demo_cpp = list(self.top_path.glob("**/demo"))[0]
         self.demo_c = list(self.top_path.glob("**/demo_c"))[0]
 
     def get_project_top_dir(self):
