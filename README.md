@@ -80,13 +80,13 @@ related binary
 - micro_logger.hpp - Contains logging functionality
 - micro_logger_writer.hpp - Contains writer implementations
 - micro_logger_tools.hpp - Utility functions
-- micro_logger_custom_paramters.h - Custom parameters
+- micro_logger_custom_parameters.h - Custom parameters
 ### C++ library
 - micro_logger++.so
 
 ### C API
 - micro_logger.h - Contains logging functionality
-- micro_logger_custom_paramters.h - Custom parameters
+- micro_logger_custom_parameters.h - Custom parameters
 ### C library
 - micro_logger++.so (mandatory dependency for C implementation)
 - micro_logger.so
