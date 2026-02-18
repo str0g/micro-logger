@@ -20,7 +20,7 @@ std::regex regex_pattern(
     R"(\[(\d{2}/\d{2}/\d{2})[ ](\d{2}:\d{2}:\d{2}\.\d{3})\]\[(TRACE|DEBUG|INFO[ ]|WARN[ ]|ERROR|CRITI)\]\[pid:(\d{8})\]\[tid:(\d{16})\]\[(\w+[-\w]*\.[cp]{1,3}):(\d{1,3})::([^\]]+)\]\[(.*?)\])",
     std::regex::ECMAScript);
 
-void setup_logger() { micro_logger::initialize(TestWriter::get_instatnce()); }
+void setup_logger() { micro_logger::initialize(TestWriter::get_instance()); }
 
 class TestPatterns : public ::testing::Test {
 public:
@@ -29,7 +29,7 @@ protected:
 };
 
 TEST_F(TestPatterns, generic_pattern) {
-  auto &obj = TestWriter::get_instatnce();
+  auto &obj = TestWriter::get_instance();
 
   int line_num = __LINE__;
   MSG_DEBUG("debug");       // 0
@@ -93,7 +93,7 @@ TEST_F(TestPatterns, generic_pattern) {
           .message = "critical",
       }};
 
-  for (const auto [index, line] : std::views::enumerate(obj.line_bufer)) {
+  for (const auto [index, line] : std::views::enumerate(obj.line_buffer)) {
     EXPECT_TRUE(std::regex_search(line, matches[index], regex_pattern));
     const logged_data out{
         .data = matches[index][1],
@@ -111,7 +111,7 @@ TEST_F(TestPatterns, generic_pattern) {
 }
 
 TEST_F(TestPatterns, tid) {
-  auto &obj = TestWriter::get_instatnce();
+  auto &obj = TestWriter::get_instance();
 
   int line_num = __LINE__;
   MSG_INFO("info");
@@ -171,7 +171,7 @@ TEST_F(TestPatterns, tid) {
       },
   };
 
-  for (const auto [index, line] : std::views::enumerate(obj.line_bufer)) {
+  for (const auto [index, line] : std::views::enumerate(obj.line_buffer)) {
     EXPECT_TRUE(std::regex_search(line, matches[index], regex_pattern));
     const logged_data out{
         .data = matches[index][1],

@@ -26,22 +26,22 @@ constexpr micro_logger_CustomParameters new_parameters{
 };
 
 void setup_logger() {
-  micro_logger::initialize(TestWriter::get_instatnce(), &new_parameters);
+  micro_logger::initialize(TestWriter::get_instance(), &new_parameters);
 }
 
-class TestCustomParamters : public ::testing::Test {
+class TestCustomParameters : public ::testing::Test {
 public:
 protected:
   static void SetUpTestSuite() { setup_logger(); }
 };
 
-TEST_F(TestCustomParamters, new_parameters) {
+TEST_F(TestCustomParameters, new_parameters) {
   auto msg{"hello world"s};
   int line_num = __LINE__;
   MSG_INFO(msg.c_str());
 
-  const auto &line_bufer = TestWriter::get_instatnce().line_bufer;
-  ASSERT_EQ(line_bufer.size(), 1);
+  const auto &line_buffer = TestWriter::get_instance().line_buffer;
+  ASSERT_EQ(line_buffer.size(), 1);
   std::vector<std::smatch> matches;
   matches.resize(1);
   auto tid = get_tid();
@@ -59,7 +59,7 @@ TEST_F(TestCustomParamters, new_parameters) {
       },
   };
 
-  for (const auto [index, line] : std::views::enumerate(line_bufer)) {
+  for (const auto [index, line] : std::views::enumerate(line_buffer)) {
     std::cout << line << std::endl;
     std::cout << "---" << std::endl;
     EXPECT_TRUE(std::regex_search(line, matches[index], regex_pattern));

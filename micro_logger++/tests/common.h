@@ -16,16 +16,16 @@ public:
   using BaseWriter::BaseWriter;
   size_t write(const char *buf, size_t size) const final {
     std::string tmp{buf, size};
-    line_bufer.emplace_back(tmp);
+    line_buffer.emplace_back(tmp);
     return size;
   }
-  inline static TestWriter &get_instatnce() {
+  inline static TestWriter &get_instance() {
     static TestWriter obj;
     return obj;
   }
 
 public:
-  mutable std::vector<std::string> line_bufer;
+  mutable std::vector<std::string> line_buffer;
 };
 
 struct logged_data {

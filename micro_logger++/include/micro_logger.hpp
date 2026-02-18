@@ -6,7 +6,7 @@
 #ifndef MICRO_LOGGER_MICRO_LOGGER_HPP
 #define MICRO_LOGGER_MICRO_LOGGER_HPP
 
-#include "micro_logger_custom_paramters.h"
+#include "micro_logger_custom_parameters.h"
 #include "micro_logger_writer.hpp"
 //
 #include <sstream>

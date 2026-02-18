@@ -4,8 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#ifndef MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMTERS_H
-#define MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMTERS_H
+#ifndef MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMETERS_H
+#define MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMETERS_H
 
 #include <sys/types.h>
 
@@ -23,11 +23,11 @@ struct micro_logger_CustomParameters {
   const char *align_lines_length;
   /// https://en.cppreference.com/w/cpp/chrono/c/strftime
   const char *time_format;
-  const char *milliseconds_format; /// optional set tu nullptr if not used
+  const char *milliseconds_format; /// optional set to nullptr if not used
 };
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMTERS_H
+#endif // MICRO_LOGGER_MICRO_LOGGER_CUSTOM_PARAMETERS_H

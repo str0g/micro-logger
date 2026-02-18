@@ -204,8 +204,8 @@ template <typename T> void bench_logging_generic(T &obj) {
                       "message", i, (3.14 * i));
             MSG_INFO("my super shot logging message");
             MSG_WARN("This is warninig message");
-            MSG_ERROR("Sometimes errors happens");
-            MSG_CRITICAL("Critiacal errors happens");
+            MSG_ERROR("Sometimes errors happen");
+            MSG_CRITICAL("Critical errors happen");
             MSG_EXIT();
           }
         },
@@ -230,8 +230,8 @@ template <typename T> void bench_logging_generic(T &obj) {
                     "message", i, (3.14 * i));
                 MSG_INFO("my super shot logging message");
                 MSG_WARN("This is warninig message");
-                MSG_ERROR("Sometimes errors happens");
-                MSG_CRITICAL("Critiacal errors happens");
+                MSG_ERROR("Sometimes errors happen");
+                MSG_CRITICAL("Critical errors happen");
                 MSG_EXIT();
               }
             });

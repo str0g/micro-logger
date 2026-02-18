@@ -22,7 +22,7 @@ public:
   }
 };
 
-void setup_logger() { micro_logger::initialize(TestWriter::get_instatnce()); }
+void setup_logger() { micro_logger::initialize(TestWriter::get_instance()); }
 
 class TestToString : public ::testing::Test {
 public:
@@ -33,12 +33,12 @@ protected:
 TEST_F(TestToString, without_operator_address_only) {
   NoOperator nop;
   MSG_INFO(micro_logger::to_string(&nop).c_str());
-  const auto &line_bufer = TestWriter::get_instatnce().line_bufer;
-  ASSERT_EQ(line_bufer.size(), 1);
+  const auto &line_buffer = TestWriter::get_instance().line_buffer;
+  ASSERT_EQ(line_buffer.size(), 1);
   constexpr size_t number_of_postfix_characters = 2;
   const auto word_start_possition =
-      line_bufer[0].size() - 8 - number_of_postfix_characters;
-  auto substr = line_bufer[0].substr(word_start_possition, 8);
+      line_buffer[0].size() - 8 - number_of_postfix_characters;
+  auto substr = line_buffer[0].substr(word_start_possition, 8);
   std::regex pattern("[a-z0-9]+");
   EXPECT_EQ(std::regex_match(substr, pattern), true);
 }
@@ -47,11 +47,11 @@ TEST_F(TestToString, with_operator) {
   Hello hello;
   MSG_INFO(micro_logger::to_string(hello).c_str());
 
-  const auto &line_bufer = TestWriter::get_instatnce().line_bufer;
-  ASSERT_EQ(line_bufer.size(), 1);
+  const auto &line_buffer = TestWriter::get_instance().line_buffer;
+  ASSERT_EQ(line_buffer.size(), 1);
   constexpr size_t number_of_postfix_characters = 2;
   const auto word_start_possition =
-      line_bufer[0].size() - hello.world.size() - number_of_postfix_characters;
-  EXPECT_EQ(line_bufer[0].substr(word_start_possition, hello.world.size()),
+      line_buffer[0].size() - hello.world.size() - number_of_postfix_characters;
+  EXPECT_EQ(line_buffer[0].substr(word_start_possition, hello.world.size()),
             hello.world);
 }
