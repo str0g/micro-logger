@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.25)
 project(
   micro_logger_project
-  VERSION 0.40
+  VERSION 0.41
   LANGUAGES CXX)
 
 # ------------------------------------------------------------

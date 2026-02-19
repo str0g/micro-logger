@@ -64,10 +64,8 @@ constexpr const char *basename(const char *const path) {
   return &path[slash_index];
 }
 
-#ifndef NODEBUG
 constexpr const char *LVL_TRACE = "TRACE";
 constexpr const char *LVL_DEBUG = "DEBUG";
-#endif
 constexpr const char *LVL_INFO = "INFO ";
 constexpr const char *LVL_WARN = "WARN ";
 constexpr const char *LVL_ERROR = "ERROR";

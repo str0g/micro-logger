@@ -40,10 +40,10 @@ class LibStdOutTesting(unittest.TestCase):
         c_lib.micro_logger_initialize.argtypes = [c_void_p, c_void_p]
         c_lib.micro_logger_initialize(writer, None)
 
-        self.lvl_info = string_at(c_char_p.in_dll(c_lib, "LVL_INFO"))
-        self.lvl_warn = string_at(c_char_p.in_dll(c_lib, "LVL_WARN"))
-        self.lvl_error = string_at(c_char_p.in_dll(c_lib, "LVL_ERROR"))
-        self.lvl_critical = string_at(c_char_p.in_dll(c_lib, "LVL_CRITICAL"))
+        self.lvl_info = string_at(c_char_p.in_dll(c_lib, "MICRO_LOGGER_LVL_INFO"))
+        self.lvl_warn = string_at(c_char_p.in_dll(c_lib, "MICRO_LOGGER_LVL_WARN"))
+        self.lvl_error = string_at(c_char_p.in_dll(c_lib, "MICRO_LOGGER_LVL_ERROR"))
+        self.lvl_critical = string_at(c_char_p.in_dll(c_lib, "MICRO_LOGGER_LVL_CRITICAL"))
 
     def test_msg_send_something(self):
         """
