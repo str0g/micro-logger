@@ -37,24 +37,22 @@ void micro_logger_logme(const char *level, const char *file, const char *func,
 
 const char *micro_logger_basename(const char *const filename);
 
-#ifndef NODEBUG
-extern const char *LVL_TRACE;
-extern const char *LVL_DEBUG;
-#endif
-extern const char *LVL_INFO;
-extern const char *LVL_WARN;
-extern const char *LVL_ERROR;
-extern const char *LVL_CRITICAL;
+extern const char *MICRO_LOGGER_LVL_TRACE;
+extern const char *MICRO_LOGGER_LVL_DEBUG;
+extern const char *MICRO_LOGGER_LVL_INFO;
+extern const char *MICRO_LOGGER_LVL_WARN;
+extern const char *MICRO_LOGGER_LVL_ERROR;
+extern const char *MICRO_LOGGER_LVL_CRITICAL;
 
 #ifndef NODEBUG
 #define MSG_DEBUG(fmt, ...)                                                    \
-  micro_logger_logme(LVL_DEBUG, micro_logger_basename(__FILE__), __FUNCTION__, \
+  micro_logger_logme(MICRO_LOGGER_LVL_DEBUG, micro_logger_basename(__FILE__), __FUNCTION__, \
                      __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_ENTER()                                                            \
-  micro_logger_logme(LVL_TRACE, micro_logger_basename(__FILE__), __FUNCTION__, \
+  micro_logger_logme(MICRO_LOGGER_LVL_TRACE, micro_logger_basename(__FILE__), __FUNCTION__, \
                      __LINE__, "%s", "--ENTER--")
 #define MSG_EXIT()                                                             \
-  micro_logger_logme(LVL_TRACE, micro_logger_basename(__FILE__), __FUNCTION__, \
+  micro_logger_logme(MICRO_LOGGER_LVL_TRACE, micro_logger_basename(__FILE__), __FUNCTION__, \
                      __LINE__, "%s", "--EXIT--")
 #else
 #define MSG_DEBUG(fmt, ...)
@@ -63,16 +61,16 @@ extern const char *LVL_CRITICAL;
 #endif
 
 #define MSG_INFO(fmt, ...)                                                     \
-  micro_logger_logme(LVL_INFO, micro_logger_basename(__FILE__), __FUNCTION__,  \
+  micro_logger_logme(MICRO_LOGGER_LVL_INFO, micro_logger_basename(__FILE__), __FUNCTION__,  \
                      __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_WARN(fmt, ...)                                                     \
-  micro_logger_logme(LVL_WARN, micro_logger_basename(__FILE__), __FUNCTION__,  \
+  micro_logger_logme(MICRO_LOGGER_LVL_WARN, micro_logger_basename(__FILE__), __FUNCTION__,  \
                      __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_ERROR(fmt, ...)                                                    \
-  micro_logger_logme(LVL_ERROR, micro_logger_basename(__FILE__), __FUNCTION__, \
+  micro_logger_logme(MICRO_LOGGER_LVL_ERROR, micro_logger_basename(__FILE__), __FUNCTION__, \
                      __LINE__, fmt, ##__VA_ARGS__)
 #define MSG_CRITICAL(fmt, ...)                                                 \
-  micro_logger_logme(LVL_CRITICAL, micro_logger_basename(__FILE__),            \
+  micro_logger_logme(MICRO_LOGGER_LVL_CRITICAL, micro_logger_basename(__FILE__),            \
                      __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
 
 #ifdef __cplusplus

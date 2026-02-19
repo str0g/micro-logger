@@ -8,12 +8,12 @@
 //
 #include <stdarg.h>
 
-const char *LVL_TRACE = micro_logger::LVL_TRACE;
-const char *LVL_DEBUG = micro_logger::LVL_DEBUG;
-const char *LVL_INFO = micro_logger::LVL_INFO;
-const char *LVL_WARN = micro_logger::LVL_WARN;
-const char *LVL_ERROR = micro_logger::LVL_ERROR;
-const char *LVL_CRITICAL = micro_logger::LVL_CRITICAL;
+const char *MICRO_LOGGER_LVL_TRACE = micro_logger::LVL_TRACE;
+const char *MICRO_LOGGER_LVL_DEBUG = micro_logger::LVL_DEBUG;
+const char *MICRO_LOGGER_LVL_INFO = micro_logger::LVL_INFO;
+const char *MICRO_LOGGER_LVL_WARN = micro_logger::LVL_WARN;
+const char *MICRO_LOGGER_LVL_ERROR = micro_logger::LVL_ERROR;
+const char *MICRO_LOGGER_LVL_CRITICAL = micro_logger::LVL_CRITICAL;
 
 const char *micro_logger_basename(const char *const file) {
   return micro_logger::basename(file);
