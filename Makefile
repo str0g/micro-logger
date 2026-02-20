@@ -24,7 +24,7 @@ list_presets:
 
 test:
 	cmake --build build/debug/ && ctest --test-dir build/debug/ --output-on-failure
-	pytest tests/test_library.py
+	LD_PRELOAD=$(shell gcc -print-file-name=libasan.so) pytest tests/test_library.py
 	pytest tests/test_cdemo.py
 	pytest tests/test_cppdemo.py
 

@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #pragma once
-#include "micro_logger_writer.hpp"
+#include "micro_logger/micro_logger_writer.hpp"
 //
 #include <ostream>
 #include <sstream>

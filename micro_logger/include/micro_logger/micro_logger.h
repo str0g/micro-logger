@@ -6,7 +6,7 @@
 #ifndef MICRO_LOGGER_MICRO_LOGGER_H
 #define MICRO_LOGGER_MICRO_LOGGER_H
 
-#include "micro_logger_custom_parameters.h"
+#include "micro_logger/micro_logger_custom_parameters.h"
 
 #ifdef __cplusplus
 extern "C" {
