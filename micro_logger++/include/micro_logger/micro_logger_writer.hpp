@@ -8,10 +8,11 @@
 
 #include <concepts>
 #include <condition_variable>
+#include <cstdint>
+#include <cstring>
 #include <fstream>
 #include <memory>
 #include <mutex>
-#include <queue>
 #include <thread>
 
 namespace micro_logger {
@@ -73,14 +74,29 @@ public:
 protected:
   void stop();
   void worker();
+  int64_t find_available_entry() const;
 
 protected:
+  struct Entry {
+    char line[128 + 1024 + 1];
+    size_t size;
+    inline bool is_taken() { return size != 0; }
+    inline void reclaim() { size = 0; }
+    inline void update(const char *in, size_t size) {
+      std::memcpy(line, in, size);
+      this->size = size;
+    }
+  };
+
+protected:
+  static constexpr int64_t max_entries{1000};
   mutable std::unique_ptr<BaseWriter> output;
-  mutable std::queue<std::string> queue;
+  mutable std::array<Entry, max_entries> queue;
   mutable std::mutex sync;
   mutable std::condition_variable cv;
   std::thread thread;
   bool run;
+  int64_t current_entry_index;
 };
 
 } // namespace micro_logger

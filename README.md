@@ -110,9 +110,9 @@ Build info: debug profile
 |bench_bytes_to_integral      |int64            |304.35 MB/s    |
 |thread_info                  |cache creation   |998ms          |
 |bench_logging_bandwidth      |write one thread |114.06 MB/s    |
-|bench_logging_bandwidth      |write multithread|188.18 MB/s    |
-|bench_logging_bandwidth_async|write one thread |68.04 MB/s     |
-|bench_logging_bandwidth_async|write multithread|58.46 MB/s     |
+|bench_logging_bandwidth      |write multithread|206.24 MB/s    |
+|bench_logging_bandwidth_async|write one thread |85.66 MB/s     |
+|bench_logging_bandwidth_async|write multithread|170.01 MB/s     |
 |C bench logging              |single thread    |108.31 MB/s    |
 |C bench logging              |multithread      |273.89 MB/s    |
 

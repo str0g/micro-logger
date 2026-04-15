@@ -103,10 +103,23 @@ AsyncWriter::AsyncWriter(std::unique_ptr<BaseWriter> &output)
     : output(std::move(output)),
       thread(std::thread(&AsyncWriter::worker, this)), run(true) {}
 
+int64_t AsyncWriter::find_available_entry() const {
+  for (size_t i = 0; i < queue.size(); ++i) {
+    if (not queue[i].is_taken()) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 size_t AsyncWriter::write(const char *buf, size_t size) const {
   {
     std::scoped_lock lock(sync);
-    queue.emplace(buf, size);
+    auto index = find_available_entry();
+    if (index == -1) {
+      return 0;
+    }
+    queue[index].update(buf, size);
   }
   cv.notify_all();
   return size;
@@ -126,14 +139,17 @@ void AsyncWriter::stop() {
 void AsyncWriter::worker() {
   while (true) {
     std::unique_lock lock(sync);
-    cv.wait(lock, [&]() { return not queue.empty() or not run; });
-    if (not run and queue.empty()) {
+    cv.wait(lock,
+            [&]() { return queue[current_entry_index].is_taken() or not run; });
+    auto &entry = queue[current_entry_index];
+    if (not run and not entry.is_taken()) {
       return;
     }
-    auto data = std::move(queue.front());
-    queue.pop();
+    if (++current_entry_index == max_entries or not queue[current_entry_index].is_taken())
+      current_entry_index = 0;
     lock.unlock();
-    output->write(data.data(), data.size());
+    output->write(entry.line, entry.size);
+    entry.reclaim();
   }
 }
 } // namespace micro_logger
