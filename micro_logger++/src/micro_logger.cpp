@@ -10,6 +10,7 @@
 #include <cstring>
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 #include <stdarg.h>
 #include <unordered_map>
 
@@ -17,7 +18,7 @@ namespace micro_logger {
 const BaseWriter *custom_writer = nullptr;
 const micro_logger_CustomParameters *custom_parameters = nullptr;
 std::mutex sync_write;
-std::mutex sync_init_header_formatter;
+std::shared_mutex sync_init_header_formatter;
 
 using CachePattern =
     std::unordered_map<std::thread::id, std::unique_ptr<char[]>>;
@@ -28,7 +29,7 @@ struct CachePatternReclaimMemory {
 
   ~CachePatternReclaimMemory() {
     if (ptr) {
-      std::unique_lock<std::mutex> lock(sync_init_header_formatter);
+      std::unique_lock lock(sync_init_header_formatter);
       ptr->erase(id);
     }
   }
@@ -48,27 +49,30 @@ void initialize(const BaseWriter &writer,
 
 const char *init_header_formatter() {
   auto thread_id = std::this_thread::get_id();
-  std::unique_lock<std::mutex> lock(sync_init_header_formatter);
   static CachePattern cached_patterns;
-  if (auto &obj = cached_patterns[thread_id]) {
-    return &obj[0];
-  } else {
-    ThreadInfo thread_info;
-    cached_patterns[thread_id] =
-        std::make_unique<char[]>(custom_parameters->header_size);
-    auto &buf = cached_patterns[thread_id];
-    // at this point we are ready only from cached_patterns perspective
-    lock.unlock();
-    //
-    cached_pattern_reclaim.ptr = &cached_patterns;
-    cached_pattern_reclaim.id = thread_id;
-    //
-    std::snprintf(&buf[0], custom_parameters->header_size,
-                  custom_parameters->header_pattern, thread_info.info.c_str(),
-                  custom_parameters->align_filename_length,
-                  custom_parameters->align_lines_length);
-    return &buf[0];
+  {
+    std::shared_lock lock(sync_init_header_formatter);
+    if (auto it = cached_patterns.find(thread_id);
+        it != cached_patterns.end()) {
+      return &it->second[0];
+    }
   }
+  std::unique_lock lock(sync_init_header_formatter);
+  ThreadInfo thread_info;
+  cached_patterns[thread_id] =
+      std::make_unique<char[]>(custom_parameters->header_size);
+  auto &buf = cached_patterns[thread_id];
+  // at this point we are ready only from cached_patterns perspective
+  lock.unlock();
+  //
+  cached_pattern_reclaim.ptr = &cached_patterns;
+  cached_pattern_reclaim.id = thread_id;
+  //
+  std::snprintf(&buf[0], custom_parameters->header_size,
+                custom_parameters->header_pattern, thread_info.info.c_str(),
+                custom_parameters->align_filename_length,
+                custom_parameters->align_lines_length);
+  return &buf[0];
 }
 
 size_t get_time(char *output) {

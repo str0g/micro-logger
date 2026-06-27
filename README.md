@@ -108,12 +108,12 @@ Build info: debug profile
 |bench_hex_to_bytes           |long data set    |15.58 MB/s     |
 |bench_bytes_to_integral      |int32            |230.77 MB/s    |
 |bench_bytes_to_integral      |int64            |304.35 MB/s    |
-|thread_info                  |cache creation   |998ms          |
-|bench_logging_bandwidth      |write one thread |114.06 MB/s    |
-|bench_logging_bandwidth      |write multithread|206.24 MB/s    |
+|thread_info                  |cache creation   |1875ms         |
+|bench_logging_bandwidth      |write one thread |106.44 MB/s    |
+|bench_logging_bandwidth      |write multithread|483.15 MB/s    |
 |bench_logging_bandwidth_async|write one thread |85.66 MB/s     |
-|bench_logging_bandwidth_async|write multithread|170.01 MB/s     |
-|C bench logging              |single thread    |108.31 MB/s    |
+|bench_logging_bandwidth_async|write multithread|180.67 MB/s    |
+|C bench logging              |single thread    |98.62 MB/s     |
 |C bench logging              |multithread      |273.89 MB/s    |
 
 ### Historical data:
