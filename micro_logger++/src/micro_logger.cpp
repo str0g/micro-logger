@@ -19,6 +19,23 @@ const micro_logger_CustomParameters *custom_parameters = nullptr;
 std::mutex sync_write;
 std::mutex sync_init_header_formatter;
 
+using CachePattern =
+    std::unordered_map<std::thread::id, std::unique_ptr<char[]>>;
+
+struct CachePatternReclaimMemory {
+  CachePattern *ptr;
+  std::thread::id id;
+
+  ~CachePatternReclaimMemory() {
+    if (ptr) {
+      std::unique_lock<std::mutex> lock(sync_init_header_formatter);
+      ptr->erase(id);
+    }
+  }
+};
+
+thread_local CachePatternReclaimMemory cached_pattern_reclaim;
+
 void initialize(const BaseWriter &writer,
                 const micro_logger_CustomParameters *parameters) {
   if (not custom_writer) {
@@ -32,18 +49,22 @@ void initialize(const BaseWriter &writer,
 const char *init_header_formatter() {
   auto thread_id = std::this_thread::get_id();
   std::unique_lock<std::mutex> lock(sync_init_header_formatter);
-  static std::unordered_map<std::thread::id, std::unique_ptr<char[]>>
-      cached_patterns;
+  static CachePattern cached_patterns;
   if (auto &obj = cached_patterns[thread_id]) {
     return &obj[0];
   } else {
     ThreadInfo thread_info;
-    cached_patterns[thread_id] = std::make_unique<char[]>(custom_parameters->header_size);
-    auto& buf = cached_patterns[thread_id];
-    //at this point we are ready only from cached_patterns perspective
+    cached_patterns[thread_id] =
+        std::make_unique<char[]>(custom_parameters->header_size);
+    auto &buf = cached_patterns[thread_id];
+    // at this point we are ready only from cached_patterns perspective
     lock.unlock();
-    std::snprintf(&buf[0], custom_parameters->header_size, custom_parameters->header_pattern,
-                  thread_info.info.c_str(),
+    //
+    cached_pattern_reclaim.ptr = &cached_patterns;
+    cached_pattern_reclaim.id = thread_id;
+    //
+    std::snprintf(&buf[0], custom_parameters->header_size,
+                  custom_parameters->header_pattern, thread_info.info.c_str(),
                   custom_parameters->align_filename_length,
                   custom_parameters->align_lines_length);
     return &buf[0];
