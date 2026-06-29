@@ -13,17 +13,38 @@
 extern "C" {
 #endif
 
+/// Custom parameters for configuring micro-logger formatting and output behavior.
+///
+/// All members except `message_size` should be initialized to their default values.
+/// A future implementation will allow runtime customization.
 struct micro_logger_CustomParameters {
-  size_t header_size;  // must be set to default value, future implementation
-                       // will allow to customize
-  size_t message_size; // minimal size is 1, for performance reason keep it bellow page size
-  const char *header_pattern; // must be set to default value, future
-                              // implementation will allow to customize
+  /// Total size of the header buffer (must be set to the default value; future
+  /// implementation will allow customization).
+  size_t header_size;
+
+  /// Message buffer size. The minimal allowed value is 1; for performance
+  /// reasons it should be kept below one memory page.
+  size_t message_size;
+
+  /// Printf-style header pattern (must be set to the default value; future
+  /// implementation will allow customization). The pattern accepts three
+  /// arguments: the formatted thread-info string, the desired aligned filename
+  /// width, and the desired aligned line-number width.
+  const char *header_pattern;
+
+  /// Printf-style format string for the filename alignment width.
   const char *align_filename_length;
+
+  /// Printf-style format string for the line-number alignment width.
   const char *align_lines_length;
-  /// https://en.cppreference.com/w/cpp/chrono/c/strftime
+
+  /// Format string for the time component, following the
+  /// [strftime](https://en.cppreference.com/w/cpp/chrono/c/strftime) specification.
   const char *time_format;
-  const char *milliseconds_format; /// optional set to nullptr if not used
+
+  /// Optional format string for the millisecond component. Set to `nullptr` if
+  /// millisecond formatting is not desired.
+  const char *milliseconds_format;
 };
 
 #ifdef __cplusplus

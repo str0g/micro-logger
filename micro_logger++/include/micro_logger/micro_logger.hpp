@@ -12,8 +12,17 @@
 #include <sstream>
 
 namespace micro_logger {
+
 /**
- * for performance reasons keep @header_size + message_size below page size.
+ * @brief Default logging configuration.
+ *
+ * Configures the header format, alignment widths, timestamp layout, and
+ * buffer sizes used by every logger instance.
+ *
+ * @headergroup micro_logger
+ *
+ * @remark header_size + message_size is kept below one memory page for
+ *         performance reasons.
  */
 constexpr micro_logger_CustomParameters default_parameters{
     .header_size = 128,
@@ -26,16 +35,32 @@ constexpr micro_logger_CustomParameters default_parameters{
 };
 
 /**
- * Before any logging operation is mandatory to call @initialze
- * This function is going to setup things only once per process.
- * @param custom_parameters use it only if don't want to use @default_parameters
+ * @brief Initialise the library.
+ *
+ * Must be called once, before any logging macro or function, typically at
+ * program startup.  It sets up the internal data structures that every
+ * subsequent log call depends on.
+ *
+ * @param[in] writer             Sink to which log lines are written.  Obtain
+ *                               one of the standard writers via the writer
+ *                               classes in `micro_logger_writer.hpp` (e.g.
+ *                               `StandardOutWriter`).
+ * @param[in] custom_parameters  Optional override of the default parameters.
+ *                               Pass `nullptr` to keep the defaults.
  */
 void initialize(
     const BaseWriter &,
     const micro_logger_CustomParameters *custom_parameters = nullptr);
 
 /**
- * To use this method class must implement friend stream operator<<
+ * @brief Convert any streamable object to std::string.
+ *
+ * Helper template used internally by the library, but also available to
+ * callers who need a quick string conversion via operator<<.
+ *
+ * @tparam T  Type with a `std::ostream& operator<<` overload.
+ * @param[in] obj  Object to stringify.
+ * @return    std::string containing the textual representation.
  */
 template <class T> std::string to_string(const T &obj) {
   std::stringstream os;
@@ -44,15 +69,31 @@ template <class T> std::string to_string(const T &obj) {
 }
 
 /**
- *  Do not use directly
- * @param level
- * @param file
- * @param line
- * @param message
+ * @brief Core logging function.
+ *
+ * Low-level function that every `MSG_*` macro expands to.  Users should not
+ * call this function directly — use the macros instead.
+ *
+ * @internal
+ *
+ * @param level   Log level string (e.g. `"INFO "`).
+ * @param file    Source file name (shortened to basename).
+ * @param func    Function name where the call occurred.
+ * @param line    Source line number.
+ * @param fmt     Format string (printf-style).
+ * @param ...     Format arguments corresponding to @p fmt.
  */
 void __logme(const char *level, const char *file, const char *func, int line,
              const char *fmt, ...);
 
+/**
+ * @brief Return the basename component of a path.
+ *
+ * @param path  Full path (e.g. `"/usr/src/main.cpp"`).
+ * @return      Pointer to the character inside @p path that starts the
+ *              basename (e.g. `"main.cpp"`).  The result points into the
+ *              original string — do not free it.
+ */
 constexpr const char *basename(const char *const path) {
   int slash_index = 0;
   int index = 0;
@@ -64,11 +105,17 @@ constexpr const char *basename(const char *const path) {
   return &path[slash_index];
 }
 
+/** Log level identifiers — `TRACE` variant. */
 constexpr const char *LVL_TRACE = "TRACE";
+/** Log level identifiers — `DEBUG` variant. */
 constexpr const char *LVL_DEBUG = "DEBUG";
+/** Log level identifiers — `INFO` variant. */
 constexpr const char *LVL_INFO = "INFO ";
+/** Log level identifiers — `WARN` variant. */
 constexpr const char *LVL_WARN = "WARN ";
+/** Log level identifiers — `ERROR` variant. */
 constexpr const char *LVL_ERROR = "ERROR";
+/** Log level identifiers — `CRITICAL` variant. */
 constexpr const char *LVL_CRITICAL = "CRITI";
 
 } // namespace micro_logger
@@ -110,6 +157,7 @@ constexpr const char *LVL_CRITICAL = "CRITI";
   micro_logger::__logme(micro_logger::LVL_CRITICAL,                            \
                         micro_logger::basename(__FILE__), __FUNCTION__,        \
                         __LINE__, fmt, ##__VA_ARGS__)
+
 #endif // USE_C_VERSION
 
 #endif // MICRO_LOGGER_MICRO_LOGGER_HPP
