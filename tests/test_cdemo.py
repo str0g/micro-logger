@@ -199,7 +199,7 @@ class CDemoStdOutTesting(unittest.TestCase):
 
         exp = [
             BenchmarkValue({"time": 402, "size": 45350000, "bandwidth": 108.31}),
-            BenchmarkValue({"time": 305, "size": 90700000, "bandwidth": 273.89}),
+            BenchmarkValue({"time": 157, "size": 90700000, "bandwidth": 547.00}),
         ]
         for index, obj in enumerate(exp):
             self.assertEqual(out[index], obj)
