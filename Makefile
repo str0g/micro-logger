@@ -2,7 +2,7 @@
 
 BUILD_DIR := build
 
-.PHONY: all list_presets test help pkg
+.PHONY: all list_presets test help doc pkg
 
 all: debug
 
@@ -30,6 +30,9 @@ test:
 
 clean:
 	rm -rf ${BUILD_DIR}
+
+doc:
+	BUILD_DIR="$(BUILD_DIR)" doxygen Doxyfile && echo "Documentation generated in ${BUILD_DIR}/doc/html/index.html"
 
 pkg:
 	ln -sf package/PKGBUILD .

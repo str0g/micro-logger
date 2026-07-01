@@ -1,0 +1,18 @@
+# Doxyfile for micro_logger
+PROJECT_NAME           = "micro_logger"
+PROJECT_NUMBER         = 0.41
+OUTPUT_DIRECTORY       = $(BUILD_DIR)/doc
+INPUT                  = micro_logger++/include micro_logger/include
+FILE_PATTERNS          = *.h *.hpp
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = examples/* demos/*
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_FORMAT            = "$file:$line: $text"
+FULL_PATH_NAMES        = YES
+JAVADOC_AUTOBRIEF      = YES
+SORT_BRIEF_DOCS        = YES
